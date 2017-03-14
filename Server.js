@@ -1,4 +1,3 @@
-
 var express = require('express')
 var app = express()
 
@@ -9,11 +8,12 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/views/index.html')
 });
 
-app.get('/twoplayer', function (req, res) {
-    res.sendFile(__dirname + '/views/twoplayer.html')
+
+app.get('/singleplayer', function (req, res) {
+    res.send('Hello you are on the singleplayer page');
 });
 
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!')
+app.listen(8080, function () {
+  console.log('Example app listening on port 8080!')
 });
 
