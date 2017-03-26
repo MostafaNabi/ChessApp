@@ -71,7 +71,7 @@ BoardView.prototype.selectSingleplayerTile = function(div, y, x) {
 }
 
 
-BoarView.prototype.selectTwoplayerTile = function(divm y, x) {
+BoardView.prototype.selectTwoplayerTile = function(div, y, x) {
 
 
 
