@@ -50,7 +50,7 @@
 
 .board_row {
     display: block;
-    position: relative; 
+    position: relative;
     width: 480px;
     height: 60px;
     margin: 0px;
@@ -58,7 +58,7 @@
 }
 
 .white_board_tile {
-    display: block; 
+    display: block;
     position: relative;
     float: left;
     width: 60px;
@@ -129,12 +129,12 @@
 
 
 .selected_tile {
-    background-color:orange;
-    
+    background-color: orange;
+
 }
 
 .last_moved_tile {
-    background-color: lightred;
+    background-color: red;
 }
 
 
@@ -169,5 +169,3 @@
     overflow-x: none;
     overflow-y: auto;
 }
-
-

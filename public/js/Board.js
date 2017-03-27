@@ -1,38 +1,47 @@
-function Board() {
-    this.white_king   = new ChessPiece(new Bitboard(0b00000000000000000000000000000000, 0b00000000000000000000000000010000), 'white', 'king');
-    this.white_queen  = new ChessPiece(new Bitboard(0b00000000000000000000000000000000, 0b00000000000000000000000000001000), 'white', 'queen');
-    this.white_bishop = new ChessPiece(new Bitboard(0b00000000000000000000000000000000, 0b00000000000000000000000000100100), 'white', 'bishop');
-    this.white_knight = new ChessPiece(new Bitboard(0b00000000000000000000000000000000, 0b00000000000000000000000001000010), 'white', 'knight');
-    this.white_rook   = new ChessPiece(new Bitboard(0b00000000000000000000000000000000, 0b00000000000000000000000010000001), 'white', 'rook');
-    this.white_pawn   = new ChessPiece(new Bitboard(0b00000000000000000000000000000000, 0b00000000000000001111111100000000), 'white', 'pawn');
-
-    this.black_king   = new ChessPiece(new Bitboard(0b00010000000000000000000000000000, 0b00000000000000000000000000000000), 'black', 'king');
-    this.black_queen  = new ChessPiece(new Bitboard(0b00001000000000000000000000000000, 0b00000000000000000000000000000000), 'black', 'queen');
-    this.black_bishop = new ChessPiece(new Bitboard(0b00100100000000000000000000000000, 0b00000000000000000000000000000000), 'black', 'bishop');
-    this.black_knight = new ChessPiece(new Bitboard(0b01000010000000000000000000000000, 0b00000000000000000000000000000000), 'black', 'knight');
-    this.black_rook   = new ChessPiece(new Bitboard(0b10000001000000000000000000000000, 0b00000000000000000000000000000000), 'black', 'rook');
-    this.black_pawn   = new ChessPiece(new Bitboard(0b00000000111111110000000000000000, 0b00000000000000000000000000000000), 'black', 'pawn');
-    
+function Board(controller) {
+    this.controller = controller;
     this.current_turn = 'white';
+
+    this.white_king   = new ChessPiece(new UInt64(0b00000000000000000000000000000000, 0b00000000000000000000000000010000), 'white', 'king');
+    this.white_queen  = new ChessPiece(new UInt64(0b00000000000000000000000000000000, 0b00000000000000000000000000001000), 'white', 'queen');
+    this.white_bishop = new ChessPiece(new UInt64(0b00000000000000000000000000000000, 0b00000000000000000000000000100100), 'white', 'bishop');
+    this.white_knight = new ChessPiece(new UInt64(0b00000000000000000000000000000000, 0b00000000000000000000000001000010), 'white', 'knight');
+    this.white_rook   = new ChessPiece(new UInt64(0b00000000000000000000000000000000, 0b00000000000000000000000010000001), 'white', 'rook');
+    this.white_pawn   = new ChessPiece(new UInt64(0b00000000000000000000000000000000, 0b00000000000000001111111100000000), 'white', 'pawn');
+
+    this.black_king   = new ChessPiece(new UInt64(0b00010000000000000000000000000000, 0b00000000000000000000000000000000), 'black', 'king');
+    this.black_queen  = new ChessPiece(new UInt64(0b00001000000000000000000000000000, 0b00000000000000000000000000000000), 'black', 'queen');
+    this.black_bishop = new ChessPiece(new UInt64(0b00100100000000000000000000000000, 0b00000000000000000000000000000000), 'black', 'bishop');
+    this.black_knight = new ChessPiece(new UInt64(0b01000010000000000000000000000000, 0b00000000000000000000000000000000), 'black', 'knight');
+    this.black_rook   = new ChessPiece(new UInt64(0b10000001000000000000000000000000, 0b00000000000000000000000000000000), 'black', 'rook');
+    this.black_pawn   = new ChessPiece(new UInt64(0b00000000111111110000000000000000, 0b00000000000000000000000000000000), 'black', 'pawn');
+
+    this.white_king_moved = false;
+    this.white_kingside_rook_moved = false;
+    this.white_queenside_rook_moved = false;
+
+    this.black_king_moved = false;
+    this.black_kingside_rook_moved = false;
+    this.black_queenside_rook_moved = false;
 }
 
 Board.prototype.init = function() {
 
 }
 
-
 Board.prototype.move = function(srcx, srcy, destx, desty) {
-    return true;
+    return ChessLogic.isValidMove(srcx, srcy, destx, desty);
 }
-
 
 Board.prototype.getPieceAt = function(xpos, ypos) {
     var all = this.getAllPieces();
     var bb = convertToBitboard(xpos, ypos);
     for(var i=0; i<all.length; i++) {
-           if(all[i].bitboard.match(bb)) {
-                return all[i];
-            }
+        if(all[i].bitboard.match(bb)) {
+            all[i].x = xpos;
+            all[i].y = ypos;
+            return all[i];
+        }
     }
     return null;
 }
@@ -57,7 +66,7 @@ Board.prototype.getBlackPieces = function() {
                this.black_knight.copy(), this.black_rook.copy(), this.black_pawn.copy()];
     return arr;
 }
-    
+
 
 // Return a  copy of this object
 Board.prototype.copy = function() {
@@ -86,7 +95,7 @@ Board.prototype.draw = function(container_id) {
         var matches = c.match('chess_piece[^\ ]+');
         if(matches != null) {
             return matches[0];
-        }         
+        }
     });
     for(var y=0; y<8; y++) {
         for(var x=0; x<8; x++) {
@@ -130,6 +139,11 @@ Bitboard.prototype.copy = function() {
     return bb;
 }
 
+Bitboard.prototype.shiftleft = function(n) {
+    this.high = this.high << n;
+    this.low = this.low << n
+}
+
 
 
 function ChessPiece(bb, colour, type) {
@@ -142,11 +156,3 @@ ChessPiece.prototype.copy = function() {
     var cp = new ChessPiece(this.bitboard.copy(), this.colour, this.type);
     return cp;
 }
-
-
-
-
-
-
-
-

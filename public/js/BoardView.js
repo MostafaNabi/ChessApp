@@ -1,78 +1,74 @@
 // Onclick functions for the navbar
 
-function BoardView() {
-    this.singleplayer_board = new Board();
-    this.twoplayer_board = new Board();
-    this.singleplayer_selected_tile = null;
-    this.twoplayer_selected_tile = null;
+function BoardView(container_id) {
+    this.container_id = container_id;
+    this.board = new Board(this);
+    this.selected_piece = null;
 }
-
 
 BoardView.prototype.init = function() {
 
 }
 
-BoardView.prototype.setupSinglePlayer = function() {
-    $('.navigation_display_container').hide();
-    $('#singleplayer_container').show();
-    this.singleplayer_board.draw('singleplayer_board_container');
-}
-
-BoardView.prototype.setupTwoPlayer = function(container_id) {
-    $('.navigation_display_container').hide();
-    $('#twoplayer_container').show();
-    this.twoplayer_board.draw('twoplayer_board_container');
-}
-
-BoardView.prototype.setupAbout = function(container_id) {
-    $('.navigation_display_container').hide();
-    $('#about_container').show();
+BoardView.prototype.display = function() {
+    $('.board_container').hide();
+    $('#'+this.container_id).show();
 }
 
 
-BoardView.prototype.selectTile = function(div, version, y, x) {
-    if(version == 'single') {
-        this.selectSingleplayerTile(div, y, x);
-    } else if(version == 'two') {
-        this.selectTwoplayerTile(div, y, x);
+BoardView.prototype.getTile = function(x,y) {
+    var con = document.getElementById(this.container_id);
+    var row = 7 - y;
+    var col = x;
+    return el.children[row][col];
+}
+
+BoardView.prototype.setHighlight = function(x,y, highlight) {
+    var tile = this.getTile(x,y);
+    $(tile).addClass(highight);
+}
+
+BoardView.prototype.removeHighlight = function(x,y, highlight) {
+    var tile = this.getTile(x,y);
+    $(tile).removeClass(highight);
+}
+
+BoardView.prototype.removeAllHighlight = function(highlight) {
+    $('#'+this.container_id + ' .board_row div').removeClass(highight);
+}
+
+
+BoardView.prototype.selectTile = function(y, x) {
+    var curr = this.selected_piece;
+    var dest = this.board.getPieceAt(x,y);
+
+    // invalid selection
+    if(curr == null && dest == null) {
+        return;
     }
-}
 
-
-BoardView.prototype.selectSingleplayerTile = function(div, y, x) {
-    if(this.singleplayer_selected_tile == null) {
-        this.singleplayer_selected_tile = {'div':div, 'x':x, 'y':y}
-        $(div).addClass('selected_tile');
-    } else {
-        var srcdiv = this.singleplayer_selected_tile.div;
-        var srcx = this.singleplayer_selected_tile.x;
-        var srcy = this.singleplayer_selected_tile.y;
-        var moved = this.singleplayer_board.move(srcx, srcy, x, y);
-        if(moved) {
-            $(srcdiv).removeClass('selected_tile');
-            $('.singleplayer_board_container *_tile').removeClass('last_moved_tile');
-            $(div).addClass('last_moved_tile');
-            
-            var src_class = $(srcdiv).attr('class').match('chess_piece[^\ ]+')[0];
-            console.log('src class', src_class, srcdiv);
-            $(srcdiv).removeClass(src_class);
-                
-            $(div).removeClass(function(i, c) {
-                var matches = c.match('chess_piece[^\ ]+');
-                if(matches != null) {
-                    return matches[0];
-                }
-            });
-
-            $(div).addClass(src_class);
-            this.singleplayer_selected_tile = null;
-         }
+    // new selection
+    if(curr == null && dest != null) {
+        this.selected_piece = dest;
+        this.setHighlight(x,y, 'selected_tile');
     }
-}
 
+    // changing same colour
+    if(curr != null && dest != null) {
+        if(curr.colour == dest.colour) {
+            this.removeHighlight(curr.x, curr.y, 'selected_piece');
+            this.setHighlight(dest.x, dest.y, 'selected_piece');
+            this.selected_piece = dest;
+        }
+    }
 
-BoardView.prototype.selectTwoplayerTile = function(div, y, x) {
-
-
+    // moving piece
+    var moved = this.board.move(curr.x, curr.y, dest.x, dest.y);
+    if(moved) {
+        this.removeAllHighlight('last_moved_tile');
+        this.removeHighlight(curr.x, curr.y, 'selected_piece');
+        this.setHighlight(dest.x, dest.y, 'last_moved_tile');
+        this.board.draw();
+    }
 
 }
