@@ -1,7 +1,6 @@
 #ifndef CHESS_H
 #define CHESS_H
 #include <string>
-#include "Board.h"
 #include "Moves.h"
 
 

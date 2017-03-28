@@ -51,7 +51,7 @@ enum Directions {
 
 
 namespace Types {
-    inline Colour get_piece_colour(Piece p) {
+    Colour get_piece_colour(Piece p) {
         uint i = (int)p;
         if(i < 6) {
             return WHITE;
@@ -62,7 +62,7 @@ namespace Types {
         }
     }
 
-    inline PieceType get_piece_type(Piece p) {
+    PieceType get_piece_type(Piece p) {
         uint i = (int)p;
         if(i == 0 || i == 6) {return KING;}
         if(i == 1 || i == 7) {return QUEEN;}
@@ -71,6 +71,25 @@ namespace Types {
         if(i == 4 || i == 10) {return ROOK;}
         if(i == 5 || i == 11) {return PAWN;}
         return PIECETYPE_NONE;
+    }
+
+    std::string remove_all_char(std::string s, char c) {
+        while(s.find(c) != s.npos) {
+            s.erase(s.find(c), 1);
+        }
+        return s;
+    }
+
+    std::string replace_all_char(std::string s, char c, std::string n) {
+        std::string s2("");
+        for(unsigned int i=0; i<s.size(); i++) {
+            if(s[i] == c) {
+                s2 += n;
+            } else {
+                s2 += s[i];
+            }
+        }
+        return s2;
     }
 }
 

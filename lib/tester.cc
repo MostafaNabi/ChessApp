@@ -1,9 +1,12 @@
 #include <string>
-#include "Board.h"
+#include <iostream>
+#include "Types.h"
 
 
 int main() {
-    Board b = Board();
 
-    Board bfen = Board(DEFAULT_FEN);
+    std::string s("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    s = Types::remove_all_char(s, ' ');
+    std::cout << s << std::endl;
+
 }

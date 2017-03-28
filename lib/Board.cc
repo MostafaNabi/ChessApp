@@ -36,12 +36,24 @@ void Board::build_from_fen(std::string fen) {
     std::regex_match(fen, matches, reg);
 
     // Extract string matches
-    std::string b_str = matches[1];
-    std::string turn_str = matches[2];
-    std::string castle_str = matches[3];
-    std::string enpassant_str = matches[4];
-    std::string halfmove_str = matches[5];
-    std::string fullmove_str = matches[6];
+    std::string b_str = matches[2];
+    b_str = Types::remove_all_char(b_str, ' ');
+
+    std::string turn_str = matches[3];
+    b_str = Types::remove_all_char(turn_str, ' ');
+
+    std::string castle_str = matches[4];
+    b_str = Types::remove_all_char(castle_str, ' ');
+
+    std::string enpassant_str = matches[5];
+    b_str = Types::remove_all_char(enpassant_str, ' ');
+
+    std::string halfmove_str = matches[6];
+    b_str = Types::remove_all_char(halfmove_str, ' ');
+
+    std::string fullmove_str = matches[7];
+    b_str = Types::remove_all_char(fullmove_str, ' ');
+
 
     std::cout << "Extracted board     string: " << b_str << std::endl;
     std::cout << "Extracted turn      string: " << turn_str << std::endl;
@@ -50,50 +62,128 @@ void Board::build_from_fen(std::string fen) {
     std::cout << "Extracted halfmove  string: " << halfmove_str << std::endl;
     std::cout << "Extracted fullmove  string: " << fullmove_str << std::endl;
 
-
     // convert to correct types and overwrite
     // reset board string be 64chars long
-    unsigned int end_i = 1;
-    for(unsigned int i=0; i<b_str.size(); i++) {
-        // set minimum range for substring
-        if(i-1 > end_i) {
-            end_i = i-1;
-        }
-        if(b_str[i] == '/') {
-            b_str = b_str.substr(0, end_i) + b_str.substr(i+1);
-        }
+    b_str = Types::remove_all_char(b_str, '/');
+    b_str = Types::replace_all_char(b_str, '1', "_");
+    b_str = Types::replace_all_char(b_str, '2', "__");
+    b_str = Types::replace_all_char(b_str, '3', "___");
+    b_str = Types::replace_all_char(b_str, '4', "____");
+    b_str = Types::replace_all_char(b_str, '5', "_____");
+    b_str = Types::replace_all_char(b_str, '6', "_______");
+    b_str = Types::replace_all_char(b_str, '7', "_________");
+    b_str = Types::replace_all_char(b_str, '8', "__________");
 
-        if(b_str[i] == '1') {
-            b_str[i] = '_';
+    uint64_t black_rook = 0;
+    uint64_t black_knight = 0;
+    uint64_t black_bishop = 0;
+    uint64_t black_queen = 0;
+    uint64_t black_king = 0;
+    uint64_t black_pawn = 0;
+    uint64_t white_rook = 0;
+    uint64_t white_knight = 0;
+    uint64_t white_bishop = 0;
+    uint64_t white_queen = 0;
+    uint64_t white_king = 0;
+    uint64_t white_pawn = 0;
+
+    // find every piece and set its location in the boards array
+    // 1 << index
+    for(int i=0; i<b_str.size(); i++) {
+        if(b_str[i] == 'r') {
+            black_rook |= (1 << i);
             continue;
         }
-        if(b_str[i] == '2') {
-            b_str = b_str.substr(0, end_i) + std::string("__") + b_str.substr(i+1);
+
+        if(b_str[i] == 'n') {
+            black_knight |= (1 << i);
+            continue;
         }
-        if(b_str[i] == '3') {
-            b_str = b_str.substr(0, end_i) + std::string("___") + b_str.substr(i+1);
+
+        if(b_str[i] == 'b') {
+            black_bishop |= (1 << i);
+            continue;
         }
-        if(b_str[i] == '4') {
-            b_str = b_str.substr(0, end_i) + std::string("____") + b_str.substr(i+1);
+        if(b_str[i] == 'q') {
+            black_queen |= (1 << i);
+            continue;
         }
-        if(b_str[i] == '5') {
-            b_str = b_str.substr(0, end_i) + std::string("_____") + b_str.substr(i+1);
+        if(b_str[i] == 'k') {
+            black_king |= (1 << i);
+            continue;
         }
-        if(b_str[i] == '6') {
-            b_str = b_str.substr(0, end_i) + std::string("______") + b_str.substr(i+1);
+
+        if(b_str[i] == 'p') {
+            black_pawn |= (1 << i);
+            continue;
         }
-        if(b_str[i] == '7') {
-            b_str = b_str.substr(0, end_i) + std::string("_______") + b_str.substr(i+1);
+
+        if(b_str[i] == 'R') {
+            white_rook |= (1 << i);
+            continue;
         }
-        if(b_str[i] == '8') {
-            b_str = b_str.substr(0, end_i) + std::string("________") + b_str.substr(i+1);
+        if(b_str[i] == 'N') {
+            white_knight |= (1 << i);
+            continue;
+        }
+        if(b_str[i] == 'B') {
+            white_bishop |= (1 << i);
+            continue;
+        }
+        if(b_str[i] == 'Q') {
+            white_queen |= (1 << i);
+            continue;
+        }
+        if(b_str[i] == 'K') {
+            white_king |= (1 << i);
+            continue;
+        }
+        if(b_str[i] == 'P') {
+            white_pawn |= (1 << i);
+            continue;
         }
     }
-    std::cout << "completed parsing board string: " << b_str << std::endl;
-    std::cout << "Board string lenth: " << b_str.size() << std::endl;
 
+    this->boards[0] = Bitboard(white_king);
+    this->boards[1] = Bitboard(white_queen);
+    this->boards[2] = Bitboard(white_bishop);
+    this->boards[3] = Bitboard(white_knight);
+    this->boards[4] = Bitboard(white_rook);
+    this->boards[5] = Bitboard(white_pawn);
 
+    this->boards[6] = Bitboard(black_king);
+    this->boards[7] = Bitboard(black_queen);
+    this->boards[8] = Bitboard(black_bishop);
+    this->boards[9] = Bitboard(black_knight);
+    this->boards[10] = Bitboard(black_rook);
+    this->boards[11] = Bitboard(black_pawn);
 
+    // parse turn
+    if(turn_str == "w") {
+        this->current_turn = WHITE;
+    } else {
+        this->current_turn = BLACK;
+    }
+
+    // reset castling rights
+    this->w_castle_rights = 0;
+    this->b_castle_rights = 0;
+
+    if(castle_str != "_") {
+        for(unsigned int i=0; i<castle_str.size(); i++) {
+            if(castle_str[i] == 'K') {
+                this->w_castle_rights |= 1;
+            } else if(castle_str[i] == 'Q') {
+                this->w_castle_rights |= 2;
+            } else if(castle_str[i] == 'k') {
+                this->b_castle_rights |= 2;
+            } else if(castle_str[i] == 'q') {
+                this->b_castle_rights |= 2;
+            }
+        }
+    }
+
+    // ignore enpassant and the rest for now
 }
 
 // Copy and move constructors

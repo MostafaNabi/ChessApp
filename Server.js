@@ -1,8 +1,10 @@
 var express = require('express')
 
 var WebInterface = require('lib/WebInterface.cc')
-var single_if = WebInterface();
-var two_if =   WebInterface();
+
+// Declare here, do not construct until init function is called
+var single_wi;
+var two_wi;
 
 var app = express()
 
@@ -13,6 +15,9 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/views/index.html')
 });
 
+// Receive FEN description of Board as data
+// Return 2D array with pieces in it, as BoardView does
+// not hold ANY logic, only displays the board.
 app.post('/singleplayer:init', function (req, res) {
     // var res = WebInterface.make_move();
 });

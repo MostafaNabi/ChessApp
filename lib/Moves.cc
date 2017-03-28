@@ -14,6 +14,6 @@ namespace Moves {
 
     Colour infer_player_colour(Square orig, const Board& b) {
         Piece p = b.get_piece_at(orig);
-        return Types::get_piece_color(p);
+        return Types::get_piece_colour(p);
     }
 }
