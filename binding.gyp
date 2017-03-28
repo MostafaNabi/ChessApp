@@ -1,8 +1,8 @@
 {
   "targets": [
     {
-      "target_name": "addon",
-      "sources": [ "lib/demo.cc" ]
+      "target_name": "WebInterface",
+      "sources": [ "lib/WebInterface.cc" ]
     }
   ]
 }

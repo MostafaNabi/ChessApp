@@ -1,20 +1,27 @@
-// Inspired by stockfish
+#ifndef TYPES_H
+#define TYPES_H
 
+// Inspired by stockfish
+#include <string>
+
+typedef unsigned int uint;
+
+const std::string DEFAULT_FEN = std::string("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 
 enum Colour {
-    WHITE,
     BLACK,
-    NONE
+    WHITE,
+    COLOUR_NONE
 };
 
 enum PieceType {
-    PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING
+    KING, QUEEN, BISHOP, KNIGHT, ROOK, PAWN, PIECETYPE_NONE
 };
 
 enum Piece {
-  NO_PIECE,
-  W_PAWN, W_KNIGHT, W_BISHOP, W_ROOK, W_QUEEN, W_KING,
-  B_PAWN, B_KNIGHT, B_BISHOP, B_ROOK, B_QUEEN, B_KING,
+    W_KING, W_QUEEN, W_BISHOP, W_KNIGHT, W_ROOK, W_PAWN, // 0 - 5
+    B_KING, B_QUEEN, B_BISHOP, B_KNIGHT, B_ROOK, B_PAWN,  // 6 - 11
+    PIECE_NONE
 };
 
 enum MoveType {
@@ -22,11 +29,7 @@ enum MoveType {
 };
 
 enum CastlingSide {
-    KINGSIDE, QUEENSIDE
-};
-
-enum CastlingRights {
-    WHITE_KINGSIDE, WHITE_QUEENSIDE, BLACK_KINGSIDE, BLACK_QUEENSIDE
+    KINGSIDE = 1, QUEENSIDE = 2
 };
 
 
@@ -46,15 +49,29 @@ enum Directions {
     NORTH_EAST = 9, NORTH_WEST = 7, SOUTH_EAST = -7, SOUTH_WEST = -9
 };
 
-//MoveType should be known before move validation is performed
-struct Move {
-    Square origin;
-    Square destination;
-    MoveType type;
 
-    Move(Square o, Square d, MoveType t) {
-        this->origin = o;
-        this->destination = d;
-        this->type = t;
+namespace Types {
+    inline Colour get_piece_colour(Piece p) {
+        uint i = (int)p;
+        if(i < 6) {
+            return WHITE;
+        } else if(i > 5 || i < 12) {
+            return BLACK;
+        } else {
+            return COLOUR_NONE;
+        }
     }
-};
+
+    inline PieceType get_piece_type(Piece p) {
+        uint i = (int)p;
+        if(i == 0 || i == 6) {return KING;}
+        if(i == 1 || i == 7) {return QUEEN;}
+        if(i == 2 || i == 8) {return BISHOP;}
+        if(i == 3 || i == 9) {return KNIGHT;}
+        if(i == 4 || i == 10) {return ROOK;}
+        if(i == 5 || i == 11) {return PAWN;}
+        return PIECETYPE_NONE;
+    }
+}
+
+#endif

@@ -1,42 +1,45 @@
+#ifndef BOARD_H
+#define BOARD_H
+
+#include <string>
+#include <regex>
+#include "Bitboard.h"
+
 class Board {
 
 public:
 
     // ------- Variables -------
-    Bitboard White_King;
-    Bitboard White_Queen;
-    Bitboard White_Bishop;
-    Bitboard White_Knight;
-    Bitboard White_Rook;
-    Bitboard White_Pawn;
-
-    Bitboard Black_King;
-    Bitboard Black_Queen;
-    Bitboard Black_Bishop;
-    Bitboard Black_Knight;
-    Bitboard Black_Rook;
-    Bitboard Black_Pawn;
-
-    Piece[][] mailbox [8][8];
+    Bitboard boards[12];
 
     Colour current_turn;
+    unsigned int w_castle_rights;
+    unsigned int b_castle_rights;
 
 
     // ------- Constructors --------
+    Board();
+    Board(std::string fen);
 
-    Board()
+    void build_from_fen(std::string fen);
 
     // Copy and move constructors
-    Board(const Board&);
-    Board(Board &&);
+    Board(const Board& other);
+    Board(Board&& other);
 
     // Destructor
     ~Board();
 
+    // ----Copy and Move Operators ---------
+    Board& operator=(const Board& other);
+    Board& operator=(Board&& other);
+
 
     // ---- Functions --------
+    Piece get_piece_at(Square s) const;
 
-    bool move(Move m);
-    bool isValidMove(Move m);
+    bool make_move(Square orig, Square dest, MoveType type);
 
-}
+};
+
+#endif

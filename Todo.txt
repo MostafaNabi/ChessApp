@@ -1,0 +1,28 @@
+Server.js
+    Make sure server is reset on refresh
+
+
+WebInterface.cc
+    Turn web interface into a class with constructor that accepts
+    initial board state and an int value for AI strength (0 for no AI)
+
+Chess.cc
+    Change constructors to as follows
+        Chess(string fen)
+        Chess(string fen, int ai_strength)
+
+
+BoardView.js
+    Create tiles dynamically from BoardView constructors,
+    the index.html file is unreadable
+
+    Seperate the WebInterface instances using url paths.
+    For example:
+        server.post('/singleplayer:make_move');
+        server.post('/twoplayer:make_move');
+
+
+
+
+Flow:
+    BoardView->Server.js.init() // create web interface

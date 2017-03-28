@@ -127,6 +127,9 @@
     background-image: url('/images/chess_images/white_pawn.png');
 }
 
+.chess_piece_none {
+
+}
 
 .selected_tile {
     background-color: orange;
