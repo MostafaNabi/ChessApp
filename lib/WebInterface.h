@@ -18,7 +18,7 @@ namespace Addon {
             ~WebInterface();
 
             static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void make_move(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static bool make_move(const v8::FunctionCallbackInfo<v8::Value>& args);
             static v8::Persistent<v8::Function> constructor;
             Chess chessapp;
     };

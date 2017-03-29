@@ -1,5 +1,4 @@
 // hello.cc
-#include <stdexcept>
 #include "WebInterface.h"
 
 
@@ -20,7 +19,7 @@ namespace Addon {
 
     Persistent<Function> WebInterface::constructor;
 
-    WebInterface::WebInterface(std:string fen, int ai) {
+    WebInterface::WebInterface(std::string fen, int ai) {
         this->chessapp = Chess(fen, ai);
     }
 
@@ -64,7 +63,7 @@ namespace Addon {
             return;
         }
 
-        std::string fen = args[0]->ToString());
+        std::string fen = args[0]->ToString();
         int ai = args[1]->IntegerValue();
 
         WebInterface* obj = new WebInterface(fen, ai);
