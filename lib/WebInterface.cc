@@ -53,14 +53,18 @@ namespace Addon {
       if (args.IsConstructCall()) {
         // Invoked as constructor: `new MyObject(...)`
         if(!args[0]->IsString()) {
-            throw std::invalid_argument("WebInterface constructor expacts (string, int).");
+            isolate->ThrowException(Exception::TypeError(
+                String::NewFromUtf8(isolate, "WebInterface constructor expacts (string, int).")));
+            return;
         }
 
         if(!args[1]->IsNumber()) {
-            throw std::invalid_argument("WebInterface constructor expacts (string, int).");
+            isolate->ThrowException(Exception::TypeError(
+                String::NewFromUtf8(isolate, "WebInterface constructor expacts (string, int).")));
+            return;
         }
 
-        String fen = String::NewFromUtf8(isolate, args[0]->ToString());
+        std::string fen = args[0]->ToString());
         int ai = args[1]->IntegerValue();
 
         WebInterface* obj = new WebInterface(fen, ai);
@@ -85,14 +89,14 @@ namespace Addon {
         // Throw an Error that is passed back to JavaScript
         isolate->ThrowException(Exception::TypeError(
             String::NewFromUtf8(isolate, "Wrong number of arguments, make_move takes 3 arguments")));
-        return;
+        return false;
       }
 
       // Check the argument types
       if (!args[0]->IsNumber() || !args[1]->IsNumber() !args[2]->IsNumber()) {
         isolate->ThrowException(Exception::TypeError(
             String::NewFromUtf8(isolate, "Wrong argument types, make_move expects three integers")));
-        return;
+        return false;
       }
 
       int orig   = (Square) args[0]->IntegerValue();
