@@ -233,10 +233,11 @@ Board& Board::operator=(Board&& other) {
 
 // ------------- Board Operators ---------------------
 Piece Board::get_piece_at(Square s) const{
-    uint bitpos = 1 << s;
+    uint64_t i = 1;
+    uint64_t bb = i << s;
 
     for(uint i=0; i<12; i++) {
-        if(boards[i] & bitpos) {
+        if(boards[i] & bb) {
             return (Piece)i;
         }
     }

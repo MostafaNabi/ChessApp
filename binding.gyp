@@ -1,8 +1,8 @@
 {
   "targets": [
     {
-      "target_name": "WebInterface",
-      "sources": [ "lib/WebInterface.cc" ]
+      "target_name": "ChessAddon",
+      "sources": [ "lib/ChessAddon.css", "lib/WebInterface.cc" ]
     }
   ]
 }

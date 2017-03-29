@@ -15,6 +15,7 @@ class Bitboard {
     public:
         // -------- Variables ----------
         uint64_t bb;
+
         const uint64_t Rank[8] = {
                 0x00000000000000FF,
                 0x000000000000FF00,
@@ -56,6 +57,7 @@ class Bitboard {
         Bitboard& operator=(Bitboard&& other);
 
         // ------- Functions -----------
+        uint64_t bitboard();
         uint64_t rank(unsigned int r);
         uint64_t file(unsigned int f);
 
@@ -73,6 +75,10 @@ class Bitboard {
         uint64_t file_behind(Square s);
 
         // ------- Bitboard Operators --------------
+        bool operator== (const Bitboard b) const;
+        bool operator!= (const Bitboard b) const;
+
+
         uint64_t operator& (const Bitboard b) const;
         void operator&= (const Bitboard b);
 
@@ -91,6 +97,7 @@ class Bitboard {
 
         uint64_t operator^ (const Square s) const;
         void operator^= (const Square s);
+
 
 
     private:

@@ -321,8 +321,8 @@ $(obj).$(TOOLSET)/%.o: $(obj)/%.s FORCE_DO_CMD
 
 ifeq ($(strip $(foreach prefix,$(NO_LOAD),\
     $(findstring $(join ^,$(prefix)),\
-                 $(join ^,WebInterface.target.mk)))),)
-  include WebInterface.target.mk
+                 $(join ^,ChessAddon.target.mk)))),)
+  include ChessAddon.target.mk
 endif
 
 quiet_cmd_regen_makefile = ACTION Regenerating $@

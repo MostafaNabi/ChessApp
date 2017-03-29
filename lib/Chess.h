@@ -14,9 +14,9 @@ public:
 
     // ------- Constructors --------
     Chess();
-    Chess(unsigned int ai);
+    Chess(int ai);
     Chess(std::string fen);
-    Chess(std::string fen, unsigned int ai);
+    Chess(std::string fen, int ai);
 
     // No copy and move constructors
     Chess(const Chess& other) = delete;

@@ -1,10 +1,12 @@
 var express = require('express')
+var app = express()
 
-var WebInterface = require('lib/WebInterface.cc')
+// test.js
+const ChessAddon = require('./build/Release/addon');
 
 // Declare here, do not construct until init function is called
-var single_wi;
-var two_wi;
+var single_wi = ChessAddon.WebInterface("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 3);
+//var two_wi = ChesAddon.WebInterface("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 3);
 
 var app = express()
 
@@ -28,10 +30,10 @@ app.post('/singleplayer:make_move', function (req, res) {
 
 
 app.post('/twoplayer:init', function (req, res) {
-}
+});
 
 app.post('/twoplayer:make_move', function (req, res) {
-}
+});
 
 app.listen(8080, function () {
   console.log('Example app listening on port 8080!')

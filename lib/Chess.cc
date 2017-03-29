@@ -3,7 +3,7 @@
 typedef unsigned int uint;
 
 
-Chess::Chess() : Chess(DEFAULT_FEN, 0) {
+Chess::Chess() : Chess(Types::DEFAULT_FEN, 0) {
 
 }
 
@@ -11,7 +11,7 @@ Chess::Chess(std::string fen) : Chess(fen, 0) {
 
 }
 
-Chess::Chess(std::string fen, unsigned int ai) {
+Chess::Chess(std::string fen, int ai) {
     this->board = Board(fen);
 }
 

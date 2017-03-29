@@ -1,23 +1,24 @@
-#ifndef MYOBJECT_H
-#define MYOBJECT_H
+// WebInterface.h
+#ifndef WEBINTERFACE_H
+#define WEBINTERFACE_H
 
+#include <string>
 #include <node.h>
 #include <node_object_wrap.h>
 #include "Chess.h"
 
-class MyObject : public node::ObjectWrap {
+class WebInterface : public node::ObjectWrap {
     public:
         static void Init(v8::Local<v8::Object> exports);
 
     private:
-        explicit MyObject(Board b , unsigned int ai);
-        ~MyObject();
+        explicit WebInterface(std::string fen, int ai);
+        ~WebInterface();
 
         static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void PlusOne(const v8::FunctionCallbackInfo<v8::Value>& args);
+        static void make_move(const v8::FunctionCallbackInfo<v8::Value>& args);
         static v8::Persistent<v8::Function> constructor;
+        Chess chessapp;
 };
-
-}  // namespace demo
 
 #endif
