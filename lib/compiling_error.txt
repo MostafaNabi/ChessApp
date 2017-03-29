@@ -1,4 +1,5 @@
-/Library/WebServer/Documents/chessapp/lib/WebInterface.cc:2:10: fatal error: 'node.h' file not found
+In file included from /Library/WebServer/Documents/chessapp/lib/WebInterface.cc:3:
+/Library/WebServer/Documents/chessapp/lib/WebInterface.h:6:10: fatal error: 'node.h' file not found
 #include <node.h>
          ^
 1 error generated.

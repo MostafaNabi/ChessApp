@@ -7,18 +7,22 @@
 #include <node_object_wrap.h>
 #include "Chess.h"
 
-class WebInterface : public node::ObjectWrap {
-    public:
-        static void Init(v8::Local<v8::Object> exports);
+namespace WebInterface {
 
-    private:
-        explicit WebInterface(std::string fen, int ai);
-        ~WebInterface();
+    class WebInterface : public node::ObjectWrap {
+        public:
+            static void Init(v8::Local<v8::Object> exports);
 
-        static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void make_move(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static v8::Persistent<v8::Function> constructor;
-        Chess chessapp;
-};
+        private:
+            explicit WebInterface(std::string fen, int ai);
+            ~WebInterface();
+
+            static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void make_move(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Persistent<v8::Function> constructor;
+            Chess chessapp;
+    };
+
+}
 
 #endif
