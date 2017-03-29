@@ -16,7 +16,7 @@ using v8::String;
 using v8::Value;
 using v8::Exception;
 
-namespace demo {
+namespace Addon {
 
     Persistent<Function> WebInterface::constructor;
 

@@ -2,7 +2,7 @@
 #include <node.h>
 #include "WebInterface.h"
 
-namespace demo {
+namespace Addon {
 
 using v8::Local;
 using v8::Object;

@@ -7,7 +7,7 @@
 #include <node_object_wrap.h>
 #include "Chess.h"
 
-namespace WebInterface {
+namespace Addon {
 
     class WebInterface : public node::ObjectWrap {
         public:
