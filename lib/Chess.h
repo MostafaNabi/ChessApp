@@ -19,8 +19,11 @@ public:
     Chess(std::string fen, int ai);
 
     // No copy and move constructors
-    Chess(const Chess& other) = delete;
-    Chess(Chess&& other) = delete;
+    Chess(const Chess& other);
+    Chess(Chess&& other);
+
+    Chess& operator=(const Chess& other);
+    Chess& operator=(Chess&& other);
 
     /*
         Take primitive values from WebInterface and convert them into

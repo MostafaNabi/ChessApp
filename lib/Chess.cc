@@ -15,6 +15,23 @@ Chess::Chess(std::string fen, int ai) {
     this->board = Board(fen);
 }
 
+Chess::Chess(const Chess& other) {
+    this->board = other.board;
+}
+
+Chess::Chess(Chess&& other) {
+    this->board = std::move(other.board);
+}
+
+Chess& Chess::operator=(const Chess& other) {
+    this->board = other.board;
+    return *this;
+}
+
+Chess& Chess::operator=(Chess&& other) {
+    this->board = std::move(other.board);
+    return *this;
+}
 
 bool Chess::make_move(Square orig, Colour col, Square dest) {
 
