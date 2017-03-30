@@ -74,6 +74,11 @@ void types_tests() {
     s = Types::replace_all_char(s, '_', "_space_");
 
     assert(s == "The_space_quick_space_brwn_space_fx_space_jumps_space_ver_space_the_space_lazy_space_dg");
+
+    std::string s2 = "nospacesinthissentence";
+    s2 = Types::remove_all_char(s2, ' ');
+    cout << "Result of removing non-existent characters" << s2 << endl;
+    assert(s2 == "nospacesinthissentence");
     cout << "Replace and remove char tests passed" << endl;
 }
 

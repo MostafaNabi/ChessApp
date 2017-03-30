@@ -16,7 +16,6 @@ public:
     unsigned int w_castle_rights;
     unsigned int b_castle_rights;
 
-
     // ------- Constructors --------
     Board();
     Board(std::string fen);

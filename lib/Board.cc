@@ -40,22 +40,22 @@ void Board::build_from_fen(std::string fen) {
 
     // Extract string matches
     std::string b_str = matches[2];
-    //b_str = Types::remove_all_char(b_str, ' ');
+    b_str = Types::remove_all_char(b_str, ' ');
 
     std::string turn_str = matches[3];
-    //b_str = Types::remove_all_char(turn_str, ' ');
+    turn_str = Types::remove_all_char(turn_str, ' ');
 
     std::string castle_str = matches[4];
-    //b_str = Types::remove_all_char(castle_str, ' ');
+    castle_str = Types::remove_all_char(castle_str, ' ');
 
     std::string enpassant_str = matches[5];
-    //b_str = Types::remove_all_char(enpassant_str, ' ');
+    enpassant_str = Types::remove_all_char(enpassant_str, ' ');
 
     std::string halfmove_str = matches[6];
-    //b_str = Types::remove_all_char(halfmove_str, ' ');
+    halfmove_str = Types::remove_all_char(halfmove_str, ' ');
 
     std::string fullmove_str = matches[7];
-    //b_str = Types::remove_all_char(fullmove_str, ' ');
+    fullmove_str = Types::remove_all_char(fullmove_str, ' ');
 
 
     std::cout << "Extracted board     string: " << b_str << std::endl;
