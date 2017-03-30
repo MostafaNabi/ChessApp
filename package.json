@@ -1,11 +1,12 @@
 {
-  "name" : "chessapp.mostafa.nabi.info",
-  "version" : "0.0.1",
-  "scripts" : {
-    "start" : "node Server.js"
+  "name": "chessapp.mostafa.nabi.info",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "node Server.js"
   },
-  "dependencies" : {
-    "express" : "latest",
-    "node-gyp" : "3.6.0"
+  "dependencies": {
+    "express": "latest",
+    "nan": "^2.5.1",
+    "node-gyp": "3.6.0",
   }
 }

@@ -31,7 +31,7 @@ Board::Board(std::string fen) {
 }
 
 void Board::build_from_fen(std::string fen) {
-    std::regex reg("(([KQBNRPkqbnrp\\/[1-8]+)(\\ [bw]\\ )([-KQkq]+\\ )(- | [a-h][1-8]\\ )(\\d\\ )(\\d))");
+/*    std::regex reg("(([KQBNRPkqbnrp\\/[1-8]+)(\\ [bw]\\ )([-KQkq]+\\ )(- | [a-h][1-8]\\ )(\\d\\ )(\\d))");
     std::smatch matches;
     std::regex_match(fen, matches, reg);
 
@@ -182,7 +182,7 @@ void Board::build_from_fen(std::string fen) {
             }
         }
     }
-
+*/
     // ignore enpassant and the rest for now
 }
 

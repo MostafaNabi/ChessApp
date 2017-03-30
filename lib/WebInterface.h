@@ -14,11 +14,11 @@ namespace Addon {
             static void Init(v8::Local<v8::Object> exports);
 
         private:
-            explicit WebInterface(std::string fen, int ai);
+            explicit WebInterface(v8::Local<v8::String> fen, int ai);
             ~WebInterface();
 
             static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
-            static bool make_move(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void make_move(const v8::FunctionCallbackInfo<v8::Value>& args);
             static v8::Persistent<v8::Function> constructor;
             Chess chessapp;
     };

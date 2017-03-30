@@ -2,7 +2,7 @@
 #define BOARD_H
 
 #include <string>
-#include <regex>
+//#include <regex>
 #include "Bitboard.h"
 
 class Board {

@@ -47,7 +47,8 @@ INCS_Debug := \
 	-I/Users/Mostafa_Nabi/.node-gyp/6.10.0/include/node \
 	-I/Users/Mostafa_Nabi/.node-gyp/6.10.0/src \
 	-I/Users/Mostafa_Nabi/.node-gyp/6.10.0/deps/uv/include \
-	-I/Users/Mostafa_Nabi/.node-gyp/6.10.0/deps/v8/include
+	-I/Users/Mostafa_Nabi/.node-gyp/6.10.0/deps/v8/include \
+	-I$(srcdir)/node_modules/nan
 
 DEFS_Release := \
 	'-DNODE_GYP_MODULE_NAME=ChessAddon' \
@@ -92,7 +93,8 @@ INCS_Release := \
 	-I/Users/Mostafa_Nabi/.node-gyp/6.10.0/include/node \
 	-I/Users/Mostafa_Nabi/.node-gyp/6.10.0/src \
 	-I/Users/Mostafa_Nabi/.node-gyp/6.10.0/deps/uv/include \
-	-I/Users/Mostafa_Nabi/.node-gyp/6.10.0/deps/v8/include
+	-I/Users/Mostafa_Nabi/.node-gyp/6.10.0/deps/v8/include \
+	-I$(srcdir)/node_modules/nan
 
 OBJS := \
 	$(obj).target/$(TARGET)/lib/WebInterface.o
