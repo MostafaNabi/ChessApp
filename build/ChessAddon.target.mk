@@ -32,8 +32,8 @@ CFLAGS_C_Debug := \
 # Flags passed to only C++ files.
 CFLAGS_CC_Debug := \
 	-std=gnu++0x \
+	-stdlib=libc++ \
 	-fno-rtti \
-	-fno-exceptions \
 	-fno-threadsafe-statics \
 	-fno-strict-aliasing
 
@@ -44,11 +44,11 @@ CFLAGS_OBJC_Debug :=
 CFLAGS_OBJCC_Debug :=
 
 INCS_Debug := \
-	-I/Users/Mostafa_Nabi/.node-gyp/6.10.0/include/node \
-	-I/Users/Mostafa_Nabi/.node-gyp/6.10.0/src \
-	-I/Users/Mostafa_Nabi/.node-gyp/6.10.0/deps/uv/include \
-	-I/Users/Mostafa_Nabi/.node-gyp/6.10.0/deps/v8/include \
-	-I$(srcdir)/node_modules/nan
+	-I/Users/Mostafa_Nabi/.node-gyp/7.8.0/include/node \
+	-I/Users/Mostafa_Nabi/.node-gyp/7.8.0/src \
+	-I/Users/Mostafa_Nabi/.node-gyp/7.8.0/deps/uv/include \
+	-I/Users/Mostafa_Nabi/.node-gyp/7.8.0/deps/v8/include \
+	-I$(srcdir)/lib
 
 DEFS_Release := \
 	'-DNODE_GYP_MODULE_NAME=ChessAddon' \
@@ -78,8 +78,8 @@ CFLAGS_C_Release := \
 # Flags passed to only C++ files.
 CFLAGS_CC_Release := \
 	-std=gnu++0x \
+	-stdlib=libc++ \
 	-fno-rtti \
-	-fno-exceptions \
 	-fno-threadsafe-statics \
 	-fno-strict-aliasing
 
@@ -90,14 +90,20 @@ CFLAGS_OBJC_Release :=
 CFLAGS_OBJCC_Release :=
 
 INCS_Release := \
-	-I/Users/Mostafa_Nabi/.node-gyp/6.10.0/include/node \
-	-I/Users/Mostafa_Nabi/.node-gyp/6.10.0/src \
-	-I/Users/Mostafa_Nabi/.node-gyp/6.10.0/deps/uv/include \
-	-I/Users/Mostafa_Nabi/.node-gyp/6.10.0/deps/v8/include \
-	-I$(srcdir)/node_modules/nan
+	-I/Users/Mostafa_Nabi/.node-gyp/7.8.0/include/node \
+	-I/Users/Mostafa_Nabi/.node-gyp/7.8.0/src \
+	-I/Users/Mostafa_Nabi/.node-gyp/7.8.0/deps/uv/include \
+	-I/Users/Mostafa_Nabi/.node-gyp/7.8.0/deps/v8/include \
+	-I$(srcdir)/lib
 
 OBJS := \
-	$(obj).target/$(TARGET)/lib/WebInterface.o
+	$(obj).target/$(TARGET)/lib/ChessAddon.o \
+	$(obj).target/$(TARGET)/lib/WebInterface.o \
+	$(obj).target/$(TARGET)/lib/Bitboard.o \
+	$(obj).target/$(TARGET)/lib/Board.o \
+	$(obj).target/$(TARGET)/lib/Types.o \
+	$(obj).target/$(TARGET)/lib/Chess.o \
+	$(obj).target/$(TARGET)/lib/Moves.o
 
 # Add to the list of files we specially track dependencies for.
 all_deps += $(OBJS)
@@ -131,7 +137,8 @@ LDFLAGS_Debug := \
 	-Wl,-search_paths_first \
 	-mmacosx-version-min=10.7 \
 	-arch x86_64 \
-	-L$(builddir)
+	-L$(builddir) \
+	-stdlib=libc++
 
 LIBTOOLFLAGS_Debug := \
 	-undefined dynamic_lookup \
@@ -144,7 +151,8 @@ LDFLAGS_Release := \
 	-Wl,-search_paths_first \
 	-mmacosx-version-min=10.7 \
 	-arch x86_64 \
-	-L$(builddir)
+	-L$(builddir) \
+	-stdlib=libc++
 
 LIBTOOLFLAGS_Release := \
 	-undefined dynamic_lookup \

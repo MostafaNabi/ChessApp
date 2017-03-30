@@ -2,7 +2,8 @@ var express = require('express')
 var app = express()
 
 // test.js
-const ChessAddon = require('./build/Release/addon');
+const ChessAddon = require('./build/Release/ChessAddon.node');
+
 
 // Declare here, do not construct until init function is called
 var single_wi = ChessAddon.WebInterface("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 3);

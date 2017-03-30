@@ -7,6 +7,7 @@ typedef unsigned int uint;
 
 // ------ Constructors -------------
 Board::Board() {
+    std::cout << "Called Board empty constructor" << std::endl;
     this->boards[0]  = Bitboard(0x0000000000000010); // White King
     this->boards[1]  = Bitboard(0x0000000000000008); // White Queen
     this->boards[2]  = Bitboard(0x0000000000000024); // White Bishop
@@ -27,32 +28,34 @@ Board::Board() {
 }
 
 Board::Board(std::string fen) {
+    std::cout << "Called Board FEN constructor with following value: " << fen << std::endl;
     this->build_from_fen(fen);
 }
 
 void Board::build_from_fen(std::string fen) {
-/*    std::regex reg("(([KQBNRPkqbnrp\\/[1-8]+)(\\ [bw]\\ )([-KQkq]+\\ )(- | [a-h][1-8]\\ )(\\d\\ )(\\d))");
+    //std::regex reg("(([KQBNRPkqbnrp\\/1-8]+)(\\ [bw]\\ )(-|[KQkq]+\\ )(-|[a-h][1-8]\\ )(\\d\\ )(\\d))");
+    std::regex reg("(([KQBNRPkqbnrp\\/1-8]+)(\\ [bw]\\ )(-|[KQkq]+\\ )(-\\ |[a-h][1-8]\\ )(\\d+\\ )(\\d+))");
     std::smatch matches;
     std::regex_match(fen, matches, reg);
 
     // Extract string matches
     std::string b_str = matches[2];
-    b_str = Types::remove_all_char(b_str, ' ');
+    //b_str = Types::remove_all_char(b_str, ' ');
 
     std::string turn_str = matches[3];
-    b_str = Types::remove_all_char(turn_str, ' ');
+    //b_str = Types::remove_all_char(turn_str, ' ');
 
     std::string castle_str = matches[4];
-    b_str = Types::remove_all_char(castle_str, ' ');
+    //b_str = Types::remove_all_char(castle_str, ' ');
 
     std::string enpassant_str = matches[5];
-    b_str = Types::remove_all_char(enpassant_str, ' ');
+    //b_str = Types::remove_all_char(enpassant_str, ' ');
 
     std::string halfmove_str = matches[6];
-    b_str = Types::remove_all_char(halfmove_str, ' ');
+    //b_str = Types::remove_all_char(halfmove_str, ' ');
 
     std::string fullmove_str = matches[7];
-    b_str = Types::remove_all_char(fullmove_str, ' ');
+    //b_str = Types::remove_all_char(fullmove_str, ' ');
 
 
     std::cout << "Extracted board     string: " << b_str << std::endl;
@@ -89,7 +92,7 @@ void Board::build_from_fen(std::string fen) {
 
     // find every piece and set its location in the boards array
     // 1 << index
-    for(int i=0; i<b_str.size(); i++) {
+    for(unsigned int i=0; i<b_str.size(); i++) {
         if(b_str[i] == 'r') {
             black_rook |= (1 << i);
             continue;
@@ -182,7 +185,7 @@ void Board::build_from_fen(std::string fen) {
             }
         }
     }
-*/
+
     // ignore enpassant and the rest for now
 }
 

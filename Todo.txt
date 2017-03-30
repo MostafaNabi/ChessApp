@@ -1,3 +1,8 @@
+Bugs
+    Declaring objects in header file seems to call their default constructors.
+    Types::remove_all_char does not work
+
+
 Server.js
     Make sure server is reset on refresh
 
