@@ -1,6 +1,5 @@
 #include <stdexcept>
 #include <iostream>
-#include <string>
 #include "Board.h"
 
 typedef unsigned int uint;
@@ -57,14 +56,6 @@ void Board::build_from_fen(std::string fen) {
     std::string fullmove_str = matches[7];
     fullmove_str = Types::remove_all_char(fullmove_str, ' ');
 
-
-    std::cout << "Extracted board     string: " << b_str << std::endl;
-    std::cout << "Extracted turn      string: " << turn_str << std::endl;
-    std::cout << "Extracted castle    string: " << castle_str << std::endl;
-    std::cout << "Extracted enpassant string: " << enpassant_str << std::endl;
-    std::cout << "Extracted halfmove  string: " << halfmove_str << std::endl;
-    std::cout << "Extracted fullmove  string: " << fullmove_str << std::endl;
-
     // convert to correct types and overwrite
     // reset board string be 64chars long
     b_str = Types::remove_all_char(b_str, '/');
@@ -73,9 +64,16 @@ void Board::build_from_fen(std::string fen) {
     b_str = Types::replace_all_char(b_str, '3', "___");
     b_str = Types::replace_all_char(b_str, '4', "____");
     b_str = Types::replace_all_char(b_str, '5', "_____");
-    b_str = Types::replace_all_char(b_str, '6', "_______");
-    b_str = Types::replace_all_char(b_str, '7', "_________");
-    b_str = Types::replace_all_char(b_str, '8', "__________");
+    b_str = Types::replace_all_char(b_str, '6', "______");
+    b_str = Types::replace_all_char(b_str, '7', "_______");
+    b_str = Types::replace_all_char(b_str, '8', "________");
+
+    std::cout << "Extracted board     string: " << b_str << std::endl;
+    std::cout << "Extracted turn      string: " << turn_str << std::endl;
+    std::cout << "Extracted castle    string: " << castle_str << std::endl;
+    std::cout << "Extracted enpassant string: " << enpassant_str << std::endl;
+    std::cout << "Extracted halfmove  string: " << halfmove_str << std::endl;
+    std::cout << "Extracted fullmove  string: " << fullmove_str << std::endl;
 
     uint64_t black_rook = 0;
     uint64_t black_knight = 0;
@@ -92,61 +90,79 @@ void Board::build_from_fen(std::string fen) {
 
     // find every piece and set its location in the boards array
     // 1 << index
+    // i  b
+    // 0  56
+    // 1  57
+    // 2  58
+    // 3  59
+    // 4  60
+    // 5  61
+    // 6  62
+    // 7  63
+    // 8  55
+    int rank = 56;
+    int file =  0;
+    // rn_qkbnrpp__p_pp__p_________p_____BpP_Q___________PPPP_PPPRNB_K__R
+    // rn_qkbnr pp__p_pp __p_____ ____p___ __BpP_Q_ ________ PPPP_PPP RNB_K__R'
     for(unsigned int i=0; i<b_str.size(); i++) {
+        uint64_t one = 1;
+        if( i % 8 == 0) {
+            rank = 56 - (8*(i / 8));
+        }
+        file = (i % 8);
         if(b_str[i] == 'r') {
-            black_rook |= (1 << i);
+            black_rook |= (one << (rank + file));
             continue;
         }
 
         if(b_str[i] == 'n') {
-            black_knight |= (1 << i);
+            black_knight |= (one << (rank + file));
             continue;
         }
 
         if(b_str[i] == 'b') {
-            black_bishop |= (1 << i);
+            black_bishop |= (one << (rank + file));
             continue;
         }
         if(b_str[i] == 'q') {
-            black_queen |= (1 << i);
+            black_queen |= (one << (rank + file));
             continue;
         }
         if(b_str[i] == 'k') {
-            black_king |= (1 << i);
+            black_king |= (one << (rank + file));
             continue;
         }
 
         if(b_str[i] == 'p') {
-            black_pawn |= (1 << i);
+            black_pawn |= (one << (rank + file));
             continue;
         }
 
         if(b_str[i] == 'R') {
-            white_rook |= (1 << i);
+            white_rook |= (1 << (rank + file));
             continue;
         }
         if(b_str[i] == 'N') {
-            white_knight |= (1 << i);
+            white_knight |= (one << (rank + file));
             continue;
         }
         if(b_str[i] == 'B') {
-            white_bishop |= (1 << i);
+            white_bishop |= (one << (rank + file));
             continue;
         }
         if(b_str[i] == 'Q') {
-            white_queen |= (1 << i);
+            white_queen |= (one << (rank + file));
             continue;
         }
         if(b_str[i] == 'K') {
-            white_king |= (1 << i);
+            white_king |= (one << (rank + file));
             continue;
         }
         if(b_str[i] == 'P') {
-            white_pawn |= (1 << i);
+            white_pawn |= (one << (rank + file));
             continue;
         }
     }
-
     this->boards[0] = Bitboard(white_king);
     this->boards[1] = Bitboard(white_queen);
     this->boards[2] = Bitboard(white_bishop);
@@ -179,7 +195,7 @@ void Board::build_from_fen(std::string fen) {
             } else if(castle_str[i] == 'Q') {
                 this->w_castle_rights |= 2;
             } else if(castle_str[i] == 'k') {
-                this->b_castle_rights |= 2;
+                this->b_castle_rights |= 1;
             } else if(castle_str[i] == 'q') {
                 this->b_castle_rights |= 2;
             }
@@ -238,10 +254,9 @@ Board& Board::operator=(Board&& other) {
 Piece Board::get_piece_at(Square s) const{
     uint64_t i = 1;
     uint64_t bb = i << s;
-
-    for(uint i=0; i<12; i++) {
-        if(boards[i] & bb) {
-            return (Piece)i;
+    for(int j=0; j<12; j++) {
+        if((boards[j].bb & bb) > 0) {
+            return (Piece)j;
         }
     }
     return PIECE_NONE;

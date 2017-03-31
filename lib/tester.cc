@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <iostream>
 // #include "Types.h"
-#include "Bitboard.h"
+#include "Board.h"
 
 using std::cout;
 using std::endl;
@@ -175,6 +175,25 @@ void bitboard_tests() {
 
 void board_tests() {
 
+    Board b1 = Board("rn1qkbnr/pp2p1pp/2p5/4p3/2BpP1Q1/8/PPPP1PPP/RNB1K2R b KQkq - 0 1");
+
+    assert(b1.w_castle_rights == 3);
+    assert(b1.b_castle_rights == 3);
+
+    cout << "White and black castle rights read correctly" << endl;
+
+    assert(b1.get_piece_at(SQ_0) == W_ROOK);
+    assert(b1.get_piece_at(SQ_26) == W_BISHOP);
+    assert(b1.get_piece_at(SQ_27) == B_PAWN);
+    assert(b1.get_piece_at(SQ_28) == W_PAWN);
+    assert(b1.get_piece_at(SQ_30) == W_QUEEN);
+    assert(b1.get_piece_at(SQ_43) == PIECE_NONE);
+    assert(b1.get_piece_at(SQ_63) == B_ROOK);
+    assert(b1.get_piece_at(SQ_56) == B_ROOK);
+    assert(b1.get_piece_at(SQ_60) == B_KING);
+
+    cout << "Board get piece at from FEN works" << endl;
+
 }
 
 void moves_tests() {
@@ -188,4 +207,5 @@ void chess_tests() {
 int main() {
     types_tests();
     bitboard_tests();
+    board_tests();
 }

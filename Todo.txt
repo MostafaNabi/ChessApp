@@ -1,20 +1,20 @@
 Bugs
-    Declaring objects in header file seems to call their default constructors.
-    Types::remove_all_char does not work
+    [1] Declaring objects in header file seems to call their default constructors.
+
+
+
+
+
+TODO
+    Fix bug 1, then test the Board and Chess classes including copy and move constructors.
+    And Board creation using the FEN parser.
 
 
 Server.js
     Make sure server is reset on refresh
 
 
-WebInterface.cc
-    Turn web interface into a class with constructor that accepts
-    initial board state and an int value for AI strength (0 for no AI)
 
-Chess.cc
-    Change constructors to as follows
-        Chess(string fen)
-        Chess(string fen, int ai_strength)
 
 
 BoardView.js
