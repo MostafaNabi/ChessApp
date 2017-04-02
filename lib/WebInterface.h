@@ -12,13 +12,20 @@ class WebInterface : public node::ObjectWrap {
         static void Init(v8::Local<v8::Object> exports);
 
     private:
-        explicit WebInterface(v8::Local<v8::String> fen, int ai);
+        explicit WebInterface(int game_type);
+        explicit WebInterface(int game_type, int ai);
+
         ~WebInterface();
 
         static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+        static void build_from_fen(const v8::FunctionCallbackInfo<v8::Value>& args);
+        static void set_ai_difficulty(const v8::FunctionCallbackInfo<v8::Value>& args);
         static void make_move(const v8::FunctionCallbackInfo<v8::Value>& args);
+        static void retrieve_board(const v8::FunctionCallbackInfo<v8::Value>& args);
+
         static v8::Persistent<v8::Function> constructor;
-        Chess chessapp;
+        Chess* chessapp;
 };
 
 

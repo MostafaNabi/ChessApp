@@ -11,10 +11,6 @@
     <script type='text/javascript'>
         SingleplayerBoardView = new BoardView('singleplayer_board_container');
         TwoPlayerBoardView = new BoardView('twoplayer_board_container')
-
-        window.onload = function() {
-            BoardView.s
-        }
     </script>
 </head>
 <body>
@@ -24,7 +20,7 @@
                 <a class='navbar-brand' href='/'> Chess App</a>
             </div> <!-- close navbar header -->
             <ul class="nav navbar-nav">
-                <li onclick="SinglePlayerBoardView.display">
+                <li onclick="SinglePlayerBoardView.display()">
                     <a href='#singleplayer'>Single Player</a>
                 </li>
                 <li onclick="TwoPlayerBoardView.display()">
@@ -53,213 +49,24 @@
         <div id='singleplayer_container' class='container navigation_display_container'>
             <div class='row'>
                 <div id='singleplayer_main_col' class='col-md-6'>
-                    <div id='singleplayer_board_container' class='board_container'>
-    <!-- row 7 -->      <div class='board_row'>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(7,0)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(7,1)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(7,2)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(7,3)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(7,4)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(7,5)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(7,6)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(7,7)"></div>
-                        </div>
-    <!-- row 6 -->      <div class='board_row'>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(6,0)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(6,1)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(6,2)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(6,3)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(6,4)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(6,5)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(6,6)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(6,7)"></div>
-                        </div>
-    <!-- row 5 -->      <div class='board_row'>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(5,0)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(5,1)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(§5,2)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(5,3)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(5,4)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(5,5)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(5,6)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(5,7)"></div>
-                        </div>
-    <!-- row 4 -->      <div class='board_row'>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(4,0)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(4,1)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(4,2)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(4,3)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(4,4)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(4,5)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(4,6)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(4,7)"></div>
-                        </div>
-
-    <!-- row 3 -->      <div class='board_row'>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(3,0)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(3,1)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(3,2)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(3,3)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(3,4)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(3,5)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(3,6)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(3,7)"></div>
-                        </div>
-
-     <!-- row 2 -->      <div class='board_row'>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(2,0)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(2,1)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(2,2)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(2,3)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(2,4)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(2,5)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(2,6)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(2,7)"></div>
-                        </div>
-
-    <!-- row 1 -->      <div class='board_row'>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(1,0)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(1,1)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(1,2)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(1,3)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(1,4)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(1,5)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(1,6)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(1,7)"></div>
-                        </div>
-
-    <!-- row 0 -->      <div class='board_row'>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(0,0)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(0,1)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(0,2)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(0,3)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(0,4)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(0,5)"></div>
-                            <div class='black_board_tile' onclick="SinglePlayerBoardView.selectTile(0,6)"></div>
-                            <div class='white_board_tile' onclick="SinglePlayerBoardView.selectTile(0,7)"></div>
-                        </div>
-                    </div> <!-- close singleplayer board container -->
+                    <div id='singleplayer_board_container' class='board_container'></div>
                 </div> <!-- close singleplayer main column -->
 
-		        <div id='singleplayer_mid_col' class='col-md-2'>
-                    <!-- this column will contain user options like AI difficult, undo, resign, draw, quit etc -->
-                </div> <!-- close singlelplayer side column -->
-                <div id='singleplayer_side-col' class='col-md-4'>
-                <!-- this column will contain the move list and board list logs -->
-                </div>
+		        <div id='singleplayer_mid_col' class='col-md-2'></div> <!-- game options -->
+                <div id='singleplayer_side-col' class='col-md-4'></div> <!-- game logs -->
+
             </div> <!-- close singleplayer row -->
-        </div> <!-- close singleplayer container' -->
+        </div>  <!-- close singleplayer container' -->
 
         <div id='twoplayer_container' class='container navigation_display_container'>
              <div class='row'>
                 <div id='twoplayer_main_col' class='col-md-6'>
-                    <div id='twoplayer_board_container' class='board_container'>
-    <!-- row 7 -->      <div class='board_row'>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(7,0)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(7,1)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(7,2)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(7,3)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(7,4)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(7,5)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(7,6)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(7,7)"></div>
-                        </div>
-    <!-- row 6 -->      <div class='board_row'>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(6,0)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(6,1)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(6,2)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(6,3)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(6,4)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(6,5)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(6,6)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(6,7)"></div>
-                        </div>
-    <!-- row 5 -->      <div class='board_row'>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(5,0)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(5,1)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(5,2)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(5,3)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(5,4)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(5,5)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(5,6)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(5,7)"></div>
-                        </div>
-    <!-- row 4 -->      <div class='board_row'>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(4,0)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(4,1)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(4,2)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(4,3)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(4,4)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(4,5)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(4,6)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(4,7)"></div>
-                        </div>
-
-    <!-- row 3 -->      <div class='board_row'>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(3,0)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(3,1)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(3,2)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(3,3)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(3,4)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(3,5)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(3,6)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(3,7)"></div>
-                        </div>
-
-     <!-- row 2 -->      <div class='board_row'>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(2,0)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(2,1)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(2,2)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(2,3)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(2,4)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(2,5)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(2,6)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(2,7)"></div>
-                        </div>
-
-    <!-- row 1 -->      <div class='board_row'>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(1,0)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(1,1)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(1,2)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(1,3)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(1,4)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(1,5)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(1,6)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(1,7)"></div>
-                        </div>
-
-    <!-- row 0 -->      <div class='board_row'>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(0,0)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(0,1)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(0,2)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(0,3)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(0,4)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(0,5)"></div>
-                            <div class='black_board_tile' onclick="TwoPlayerBoardView.selectTile(0,6)"></div>
-                            <div class='white_board_tile' onclick="TwoPlayerBoardView.selectTile(0,7)"></div>
-                        </div>
-                    </div> <!-- close twoplayer board container -->
+                    <div id='twoplayer_board_container' class='board_container'></div>
                 </div> <!-- close twoplayer main column -->
 
-		        <div id='twoplayer_mid_col' class='col-md-2'>
-                    <!-- this column will contain user options like undo, resign, draw, quit etc -->
-                    <div id='twoplayer_options_container' class='chess_options_container'>
-                        <input type='button' value='Undo'/>
-                        <input type='button' value='Offer Draw'/>
-                        <input type='button' value='Resign'/>
-                    </div>
-                </div> <!-- close twoplayer mid column -->
+		        <div id='twoplayer_mid_col' class='col-md-2'></div> <!-- game options -->
+                <div id='twoplayer_side-col' class='col-md-4'></div> <!-- game logs -->
 
-                <div id='twoplayer_side-col' class='col-md-4'>
-                <!-- this column will contain the move list and board list logs -->
-                    <div id='twoplayer_move_list' class='game_move_log'>
-                        Move Logs
-                    </div>
-
-                    <div id='twoplayer_board_logs' class='game_board_log'>
-                        Board Logs
-                    </div>
-                </div>
             </div> <!-- close twoplayer row -->
         </div> <!-- close two player container -->
 

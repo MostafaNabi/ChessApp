@@ -8,6 +8,7 @@ Bugs
 TODO
     Fix bug 1, then test the Board and Chess classes including copy and move constructors.
     And Board creation using the FEN parser.
+    Implement type checking in Chess and web interface
 
 
 Server.js

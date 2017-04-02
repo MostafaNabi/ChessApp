@@ -1,43 +1,62 @@
+#include <stdexcept>
 #include "Chess.h"
 
 typedef unsigned int uint;
 
 
-Chess::Chess() : Chess(Types::DEFAULT_FEN, 0) {
-
+Chess::Chess(GameType g) {
+    if(g == SINGLEPLAYER) {
+        throw std::invalid_argument("Singleplayer games must be given an AI");
+    }
+    this->board = Board();
+    this->game_type = g;
 }
 
-Chess::Chess(std::string fen) : Chess(fen, 0) {
-
-}
-
-Chess::Chess(std::string fen, int ai) {
-    this->board = Board(fen);
+Chess::Chess(GameType g, int ai) {
+    if(g == TWOPLAYER) {
+        throw std::invalid_argument("Twoplayer games cannot have an AI");
+    }
+    this->board = Board();
+    this->game_type = g;
+    this->set_ai_difficulty(ai);
 }
 
 Chess::Chess(const Chess& other) {
     this->board = other.board;
+    this->game_type = other.game_type;
 }
 
 Chess::Chess(Chess&& other) {
     this->board = std::move(other.board);
+    this->game_type = other.game_type;
 }
 
 Chess& Chess::operator=(const Chess& other) {
     this->board = other.board;
+    this->game_type = other.game_type;
     return *this;
 }
 
 Chess& Chess::operator=(Chess&& other) {
     this->board = std::move(other.board);
+    this->game_type = other.game_type;
     return *this;
 }
 
-bool Chess::make_move(Square orig, Colour col, Square dest) {
+void Chess::build_from_fen(std::string fen) {
+    this->board.build_from_fen(fen);
+}
 
-    // Player making the move
+void Chess::set_ai_difficulty(int ai) {
+    if(ai < 1 || ai > 10) {
+        throw std::invalid_argument("AI difficulty must be between 1 and 10");
+    }
+    // set AI
+}
 
+bool Chess::make_move(Square orig, Square dest) {
     // Determine move type
+    Colour col = Moves::infer_player_colour(orig, this->board);
     MoveType type = Moves::infer_move_type(orig, col, dest, this->board);
 
     // Validate move
@@ -48,4 +67,10 @@ bool Chess::make_move(Square orig, Colour col, Square dest) {
     } else {
         return false;
     }
+}
+
+
+bool Chess::retrieve_board(Square orig, Square dest) {
+    // call board.get_piece_at() for every square
+    // and return the resulting array
 }

@@ -4,36 +4,36 @@ var app = express()
 // test.js
 const ChessAddon = require('./build/Release/ChessAddon.node');
 
-
-// Declare here, do not construct until init function is called
-var single_wi = ChessAddon.WebInterface("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 3);
-//var two_wi = ChesAddon.WebInterface("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 3);
-
-var app = express()
+var single_wi = new ChessAddon.WebInterface(1, 3);
+var two_wi = new ChessAddon.WebInterface(2);
 
 // Defining middleware to serve static file
 app.use(express.static('public'));
 
 app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/views/index.html')
+    res.sendFile(__dirname + '/views/index.html');
 });
 
 // Receive FEN description of Board as data
 // Return 2D array with pieces in it, as BoardView does
 // not hold ANY logic, only displays the board.
-app.post('/singleplayer:init', function (req, res) {
+app.get('/singleplayer/build_from_fen', function (req, res) {
     // var res = WebInterface.make_move();
 });
 
-app.post('/singleplayer:make_move', function (req, res) {
+app.get('/singleplayer/make_move', function (req, res) {
     // var res = WebInterface.make_move();
+    var orig_square = parseInt(req.param.('orig'));
+    var dest_square = parseInt(reg.param.('des't));
+    var moved = single_wi.make_move(orig_square, dest_square);
+    
 });
 
-
-app.post('/twoplayer:init', function (req, res) {
+app.get('/twoplayer:build_from_fen', function (req, res) {
 });
 
-app.post('/twoplayer:make_move', function (req, res) {
+app.get('/twoplayer/make_move', function (req, res) {
+    // var res = WebInterface.make_move();
 });
 
 app.listen(8080, function () {

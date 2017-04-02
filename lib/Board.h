@@ -20,8 +20,6 @@ public:
     Board();
     Board(std::string fen);
 
-    void build_from_fen(std::string fen);
-
     // Copy and move constructors
     Board(const Board& other);
     Board(Board&& other);
@@ -38,6 +36,9 @@ public:
     Piece get_piece_at(Square s) const;
 
     bool make_move(Square orig, Square dest, MoveType type);
+
+    void build_from_fen(std::string fen);
+
 
 };
 

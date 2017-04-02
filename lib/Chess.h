@@ -9,14 +9,12 @@ public:
 
     // ------- Variables --------
     Board board;
-
+    GameType game_type;
 
 
     // ------- Constructors --------
-    Chess();
-    Chess(int ai);
-    Chess(std::string fen);
-    Chess(std::string fen, int ai);
+    Chess(GameType g);
+    Chess(GameType g, int ai);
 
     // No copy and move constructors
     Chess(const Chess& other);
@@ -26,10 +24,13 @@ public:
     Chess& operator=(Chess&& other);
 
     /*
-        Take primitive values from WebInterface and convert them into
-        enums
+        Reset the board using the FEN string;
     */
-    bool make_move(Square orig, Colour col, Square dest);
+    void build_from_fen(std::string fen);
+
+    // Set AI difficulty between 1 - 10, can only be done on singleplayer games
+    void set_ai_difficulty(int ai);
+    bool make_move(Square orig, Square dest);
 };
 
 // Provides interface between Nodejs and C++

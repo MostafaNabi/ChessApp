@@ -1,8 +1,7 @@
 {
     "targets": [{
         "target_name": "ChessAddon",
-        "sources": [ "lib/ChessAddon.cc", "lib/WebInterface.cc", "lib/Bitboard.cc", "lib/Board.cc", "lib/Types.cc", "lib/Chess.cc", "lib/Moves.cc" ],
-        "include_dirs": ["./lib"],
+        "sources": ["lib/Types.cc","lib/Bitboard.cc","lib/Board.cc","lib/Moves.cc","lib/Chess.cc","lib/WebInterface.cc","lib/ChessAddon.cc"],
         'cflags!': [ '-fno-exceptions' ],
         'cflags_cc!': [ '-std=c++11', '-fno-exceptions' ],
         'conditions': [

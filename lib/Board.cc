@@ -31,11 +31,79 @@ Board::Board(std::string fen) {
     this->build_from_fen(fen);
 }
 
+// Copy and move constructors
+Board::Board(const Board& other) {
+    for(uint i=0; i<12; i++) {
+        this->boards[i] = other.boards[i];
+    }
+
+    this->w_castle_rights = other.w_castle_rights;
+    this->b_castle_rights = other.b_castle_rights;
+}
+
+Board::Board(Board&& other) {
+    for(uint i=0; i<12; i++) {
+        this->boards[i] = other.boards[i];
+    }
+    this->w_castle_rights = other.w_castle_rights;
+    this->b_castle_rights = other.b_castle_rights;
+}
+
+// Destructor, no dynamic memory
+Board::~Board() {
+
+}
+
+// ----Copy and Move Operators ---------
+Board& Board::operator=(const Board& other) {
+    if(&other != this) {
+        for(uint i=0; i<12; i++) {
+            this->boards[i] = other.boards[i];
+        }
+        this->w_castle_rights = other.w_castle_rights;
+        this->b_castle_rights = other.b_castle_rights;
+    }
+    return *this;
+}
+
+
+Board& Board::operator=(Board&& other) {
+    for(uint i=0; i<12; i++) {
+        this->boards[i] = other.boards[i];
+    }
+    this->w_castle_rights = other.w_castle_rights;
+    this->b_castle_rights = other.b_castle_rights;
+    return *this;
+}
+
+// ------------- Board Operators ---------------------
+Piece Board::get_piece_at(Square s) const{
+    uint64_t i = 1;
+    uint64_t bb = i << s;
+    for(int j=0; j<12; j++) {
+        if((boards[j].bb & bb) > 0) {
+            return (Piece)j;
+        }
+    }
+    return PIECE_NONE;
+}
+
+bool Board::make_move(Square orig, Square dest, MoveType type) {
+    return false;
+}
+
+
+
+
+
 void Board::build_from_fen(std::string fen) {
     //std::regex reg("(([KQBNRPkqbnrp\\/1-8]+)(\\ [bw]\\ )(-|[KQkq]+\\ )(-|[a-h][1-8]\\ )(\\d\\ )(\\d))");
     std::regex reg("(([KQBNRPkqbnrp\\/1-8]+)(\\ [bw]\\ )(-|[KQkq]+\\ )(-\\ |[a-h][1-8]\\ )(\\d+\\ )(\\d+))");
     std::smatch matches;
-    std::regex_match(fen, matches, reg);
+    bool res = std::regex_match(fen, matches, reg);
+    if(!res) {
+        throw std::invalid_argument("Invalid FEN string");
+    }
 
     // Extract string matches
     std::string b_str = matches[2];
@@ -201,67 +269,5 @@ void Board::build_from_fen(std::string fen) {
             }
         }
     }
-
     // ignore enpassant and the rest for now
-}
-
-// Copy and move constructors
-Board::Board(const Board& other) {
-    for(uint i=0; i<12; i++) {
-        this->boards[i] = other.boards[i];
-    }
-
-    this->w_castle_rights = other.w_castle_rights;
-    this->b_castle_rights = other.b_castle_rights;
-}
-
-Board::Board(Board&& other) {
-    for(uint i=0; i<12; i++) {
-        this->boards[i] = other.boards[i];
-    }
-    this->w_castle_rights = other.w_castle_rights;
-    this->b_castle_rights = other.b_castle_rights;
-}
-
-// Destructor, no dynamic memory
-Board::~Board() {
-
-}
-
-// ----Copy and Move Operators ---------
-Board& Board::operator=(const Board& other) {
-    if(&other != this) {
-        for(uint i=0; i<12; i++) {
-            this->boards[i] = other.boards[i];
-        }
-        this->w_castle_rights = other.w_castle_rights;
-        this->b_castle_rights = other.b_castle_rights;
-    }
-    return *this;
-}
-
-
-Board& Board::operator=(Board&& other) {
-    for(uint i=0; i<12; i++) {
-        this->boards[i] = other.boards[i];
-    }
-    this->w_castle_rights = other.w_castle_rights;
-    this->b_castle_rights = other.b_castle_rights;
-    return *this;
-}
-
-// ------------- Board Operators ---------------------
-Piece Board::get_piece_at(Square s) const{
-    uint64_t i = 1;
-    uint64_t bb = i << s;
-    for(int j=0; j<12; j++) {
-        if((boards[j].bb & bb) > 0) {
-            return (Piece)j;
-        }
-    }
-    return PIECE_NONE;
-}
-
-bool Board::make_move(Square orig, Square dest, MoveType type) {
-    return false;
 }

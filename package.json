@@ -6,6 +6,6 @@
   },
   "dependencies": {
     "express": "latest",
-    "node-gyp": "latest"
+    "node-gyp": "3.6.0"
   }
 }

@@ -1,8 +1,8 @@
 #include <string>
 #include <assert.h>
 #include <iostream>
-// #include "Types.h"
-#include "Board.h"
+#include "Chess.h"
+
 
 using std::cout;
 using std::endl;
@@ -201,7 +201,9 @@ void moves_tests() {
 }
 
 void chess_tests() {
+    Chess c1(TWOPLAYER);
 
+    bool res = c1.make_move((Square)23, (Colour)1, (Square)40);
 }
 
 int main() {

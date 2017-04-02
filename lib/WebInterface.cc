@@ -19,15 +19,21 @@ using v8::Exception;
 
 Persistent<Function> WebInterface::constructor;
 
-WebInterface::WebInterface(Local<String>fen, int ai) {
-    v8::String::Utf8Value str(fen);
-    std::string f = std::string(*str);
-    std::cout << "Initialising Chess in WebInterface contructor with the following arguments: " << f << ", " << ai << std::endl;
-    this->chessapp = Chess(f, ai);
+WebInterface::WebInterface(int game_type) {
+    GameType g = (GameType) game_type;
+    this->chessapp = new Chess(g);
+}
+
+
+WebInterface::WebInterface(int game_type, int ai) {
+//   v8::String::Utf8Value str(fen);
+    //std::string f = std::string(*str);
+    GameType g = (GameType) game_type;
+    this->chessapp = new Chess(g, ai);
 }
 
 WebInterface::~WebInterface() {
-
+    delete this->chessapp;
 }
 
 // Initialises wrapper
@@ -40,7 +46,12 @@ void WebInterface::Init(Local<Object> exports) {
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   // Prototype
+  NODE_SET_PROTOTYPE_METHOD(tpl, "build_from_fen", build_from_fen);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "set_ai_difficulty", set_ai_difficulty);
   NODE_SET_PROTOTYPE_METHOD(tpl, "make_move", make_move);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "retrieve_board", make_move);
+
+
 
   constructor.Reset(isolate, tpl->GetFunction());
   exports->Set(String::NewFromUtf8(isolate, "WebInterface"),
@@ -50,65 +61,101 @@ void WebInterface::Init(Local<Object> exports) {
 
 
 void WebInterface::New(const FunctionCallbackInfo<Value>& args) {
-  Isolate* isolate = args.GetIsolate();
+    Isolate* isolate = args.GetIsolate();
 
-  if (args.IsConstructCall()) {
-    // Invoked as constructor: `new MyObject(...)`
+    if (args.IsConstructCall()) {
+        // Invoked as constructor: `new MyObject(...)`
+        if(args.Length() == 1) {
+            // Type check
+            if(!args[0]->IsNumber()) {
+                isolate->ThrowException(Exception::TypeError(
+                    String::NewFromUtf8(isolate, "Wrong argument types, make_move expects three integers")));
+                return;
+            }
+            int game_type = args[0]->IntegerValue();
+            WebInterface* obj = new WebInterface(game_type);
+            obj->Wrap(args.This());
+            args.GetReturnValue().Set(args.This());
+
+        } else if(args.Length() == 2) {
+            // Type check
+            if(!args[0]->IsNumber() || !args[1]->IsNumber()) {
+                isolate->ThrowException(Exception::TypeError(
+                    String::NewFromUtf8(isolate, "Wrong argument types, make_move expects three integers")));
+                return;
+            }
+            int game_type = args[0]->IntegerValue();
+            int ai = args[1]->IntegerValue();
+            WebInterface* obj = new WebInterface(game_type, ai);
+            obj->Wrap(args.This());
+            args.GetReturnValue().Set(args.This());
+        }
+
+    }
+}
+
+void WebInterface::build_from_fen(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = args.GetIsolate();
+
     if(!args[0]->IsString()) {
         isolate->ThrowException(Exception::TypeError(
-            String::NewFromUtf8(isolate, "WebInterface constructor expacts (string, int).")));
-        return;
-    }
-
-    if(!args[1]->IsNumber()) {
-        isolate->ThrowException(Exception::TypeError(
-            String::NewFromUtf8(isolate, "WebInterface constructor expacts (string, int).")));
+            String::NewFromUtf8(isolate, "Wrong argument types, build_from_fen expects strings")));
         return;
     }
 
     Local<String> fen = args[0]->ToString();
-    int ai = args[1]->IntegerValue();
+    v8::String::Utf8Value str(fen);
+    std::string f = std::string(*str);
 
-    WebInterface* obj = new WebInterface(fen, ai);
-    obj->Wrap(args.This());
-    args.GetReturnValue().Set(args.This());
-  } else {
-    // Invoked as plain function `MyObject(...)`, turn into construct call.
-    const int argc = 2;
-    Local<Value> argv[argc] = { args[0], args[1] };
-    Local<Context> context = isolate->GetCurrentContext();
-    Local<Function> cons = Local<Function>::New(isolate, constructor);
-    Local<Object> result = cons->NewInstance(context, argc, argv).ToLocalChecked();
-    args.GetReturnValue().Set(result);
-  }
+    WebInterface* obj = ObjectWrap::Unwrap<WebInterface>(args.Holder());
+    obj->chessapp->build_from_fen(f);
+}
+
+void WebInterface::set_ai_difficulty(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = args.GetIsolate();
+
+    if(!args[0]->IsNumber()) {
+        isolate->ThrowException(Exception::TypeError(
+            String::NewFromUtf8(isolate, "Wrong argument types, set_ai_difficulty expects integer")));
+        return;
+    }
+    int ai = args[0]->IntegerValue();
+    WebInterface* obj = ObjectWrap::Unwrap<WebInterface>(args.Holder());
+    obj->chessapp->set_ai_difficulty(ai);
 }
 
 void WebInterface::make_move(const FunctionCallbackInfo<Value>& args) {
     Isolate* isolate = args.GetIsolate();
 
   // Check the number of arguments passed.
-  if (args.Length() < 3) {
+  if (args.Length() < 2) {
     // Throw an Error that is passed back to JavaScript
     isolate->ThrowException(Exception::TypeError(
-        String::NewFromUtf8(isolate, "Wrong number of arguments, make_move takes 3 arguments")));
+        String::NewFromUtf8(isolate, "Wrong number of arguments, make_move takes 2 arguments")));
     args.GetReturnValue().Set( Boolean::New(isolate, false));
     return;
   }
 
   // Check the argument types
-  if (!args[0]->IsNumber() || !args[1]->IsNumber() || !args[2]->IsNumber()) {
+  if (!args[0]->IsNumber() || !args[1]->IsNumber()) {
     isolate->ThrowException(Exception::TypeError(
-        String::NewFromUtf8(isolate, "Wrong argument types, make_move expects three integers")));
+        String::NewFromUtf8(isolate, "Wrong argument types, make_move expects 2 integers")));
     args.GetReturnValue().Set( Boolean::New(isolate, false));
     return;
   }
 
   Square orig   = (Square) args[0]->IntegerValue();
-  Colour col = (Colour) args[1]->IntegerValue();
-  Square dest   = (Square) args[2]->IntegerValue();
+  Square dest   = (Square) args[1]->IntegerValue();
 
   WebInterface* obj = ObjectWrap::Unwrap<WebInterface>(args.Holder());
-  bool res = obj->chessapp.make_move(orig, col, dest);
-
+  bool res = obj->chessapp->make_move(orig, dest);
   args.GetReturnValue().Set( Boolean::New(isolate, res));
+}
+
+
+
+void WebInterface::make_move(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = args.GetIsolate();
+    //args.GetReturnValue().Set( Boolean::New(isolate, res));
+
 }

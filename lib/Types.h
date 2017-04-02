@@ -6,6 +6,12 @@
 
 typedef unsigned int uint;
 
+enum GameType {
+    SINGLEPLAYER = 1,
+    TWOPLAYER = 2
+};
+
+
 enum Colour {
     BLACK,
     WHITE,
