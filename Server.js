@@ -22,11 +22,23 @@ app.get('/singleplayer/build_from_fen', function (req, res) {
 });
 
 app.get('/singleplayer/make_move', function (req, res) {
-    // var res = WebInterface.make_move();
-    var orig_square = parseInt(req.param.('orig'));
-    var dest_square = parseInt(reg.param.('des't));
+    var orig_square = parseInt(req.query.orig);
+    var dest_square = parseInt(req.query.dest);
+    console.log("Got parameters", orig_square, dest_square);
     var moved = single_wi.make_move(orig_square, dest_square);
-    
+    var resp = {}
+    if(moved) {
+        var resp = JSON.parse(single_wi.retrieve_board());
+        resp.moved = true;
+        res.json(resp);
+    } else {
+        resp.moved = false;
+        res.json(resp);
+    }
+});
+
+app.get('/singleplayer/retrieve_board', function (req, res) {
+    res.send(single_wi.retrieve_board());
 });
 
 app.get('/twoplayer:build_from_fen', function (req, res) {

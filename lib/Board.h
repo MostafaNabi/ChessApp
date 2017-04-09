@@ -35,10 +35,15 @@ public:
     // ---- Functions --------
     Piece get_piece_at(Square s) const;
 
+    Bitboard operator[] (Piece p) const;
+
+    Bitboard all_white_bb() const;
+    Bitboard all_black_bb() const;
+
+
     bool make_move(Square orig, Square dest, MoveType type);
 
     void build_from_fen(std::string fen);
-
 
 };
 

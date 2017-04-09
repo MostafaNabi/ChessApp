@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <iostream>
 #include "Chess.h"
 
 typedef unsigned int uint;
@@ -8,7 +9,6 @@ Chess::Chess(GameType g) {
     if(g == SINGLEPLAYER) {
         throw std::invalid_argument("Singleplayer games must be given an AI");
     }
-    this->board = Board();
     this->game_type = g;
 }
 
@@ -16,7 +16,6 @@ Chess::Chess(GameType g, int ai) {
     if(g == TWOPLAYER) {
         throw std::invalid_argument("Twoplayer games cannot have an AI");
     }
-    this->board = Board();
     this->game_type = g;
     this->set_ai_difficulty(ai);
 }
@@ -61,7 +60,7 @@ bool Chess::make_move(Square orig, Square dest) {
 
     // Validate move
     bool is_valid = Moves::is_valid_move(orig, col, dest, type, this->board);
-
+    std::cout << "Is valid: " << is_valid << std::endl;
     if(is_valid) {
         return this->board.make_move(orig, dest, type);
     } else {
@@ -70,7 +69,13 @@ bool Chess::make_move(Square orig, Square dest) {
 }
 
 
-bool Chess::retrieve_board(Square orig, Square dest) {
-    // call board.get_piece_at() for every square
-    // and return the resulting array
+std::vector<Piece> Chess::retrieve_board() {
+    std::vector<Piece> v;
+
+    for(int i=0; i<64; i++) {
+        Square s = (Square)i;
+        Piece p = this->board.get_piece_at(s);
+        v.push_back(p);
+    }
+    return v;
 }

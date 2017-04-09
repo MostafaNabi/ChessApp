@@ -49,7 +49,7 @@ void WebInterface::Init(Local<Object> exports) {
   NODE_SET_PROTOTYPE_METHOD(tpl, "build_from_fen", build_from_fen);
   NODE_SET_PROTOTYPE_METHOD(tpl, "set_ai_difficulty", set_ai_difficulty);
   NODE_SET_PROTOTYPE_METHOD(tpl, "make_move", make_move);
-  NODE_SET_PROTOTYPE_METHOD(tpl, "retrieve_board", make_move);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "retrieve_board", retrieve_board);
 
 
 
@@ -154,8 +154,20 @@ void WebInterface::make_move(const FunctionCallbackInfo<Value>& args) {
 
 
 
-void WebInterface::make_move(const FunctionCallbackInfo<Value>& args) {
+void WebInterface::retrieve_board(const FunctionCallbackInfo<Value>& args) {
     Isolate* isolate = args.GetIsolate();
-    //args.GetReturnValue().Set( Boolean::New(isolate, res));
+    WebInterface* obj = ObjectWrap::Unwrap<WebInterface>(args.Holder());
+    std::vector<Piece> v =  obj->chessapp->retrieve_board();
 
+    std::string s = "{\"board\":[";
+    for(unsigned int i=0; i<v.size(); i++) {
+        s += std::to_string((int)v[i]);
+        if( i != v.size()-1) {
+            s += ",";
+        }
+
+    }
+    s += "]}";
+    Local<String> str = String::NewFromUtf8(isolate, s.c_str());
+    args.GetReturnValue().Set(str);
 }

@@ -1,6 +1,7 @@
 #ifndef CHESS_H
 #define CHESS_H
 #include <string>
+#include <vector>
 #include "Moves.h"
 
 
@@ -31,6 +32,9 @@ public:
     // Set AI difficulty between 1 - 10, can only be done on singleplayer games
     void set_ai_difficulty(int ai);
     bool make_move(Square orig, Square dest);
+
+    // start from square 0
+    std::vector<Piece> retrieve_board();
 };
 
 // Provides interface between Nodejs and C++

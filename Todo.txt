@@ -1,34 +1,9 @@
-Bugs
-    [1] Declaring objects in header file seems to call their default constructors.
-
-
-
-
 
 TODO
-    Fix bug 1, then test the Board and Chess classes including copy and move constructors.
-    And Board creation using the FEN parser.
-    Implement type checking in Chess and web interface
-
-
-Server.js
-    Make sure server is reset on refresh
-
-
-
-
-
-BoardView.js
-    Create tiles dynamically from BoardView constructors,
-    the index.html file is unreadable
-
-    Seperate the WebInterface instances using url paths.
-    For example:
-        server.post('/singleplayer:make_move');
-        server.post('/twoplayer:make_move');
-
-
-
-
-Flow:
-    BoardView->Server.js.init() // create web interface
+    Separate move bitboards and fully valid moves.
+    Move bitboards should only check that the target square is valid, i.e
+    within reach and not occupied by the same piece. It should not do any checks
+    like whether it results in check etc. Functions returning fully valid moves
+    should use the move bitboards and then process their own checks. These
+    functions should not return bitboards but arrays/vectors of a custom type
+    Move object.

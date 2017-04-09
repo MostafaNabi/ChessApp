@@ -88,8 +88,44 @@ Piece Board::get_piece_at(Square s) const{
     return PIECE_NONE;
 }
 
+
+Bitboard Board::operator[] (Piece p) const {
+    if(p == PIECE_NONE) {
+        uint64_t none_bb = 0;
+        for(int i=0; i<12; i++) {
+            none_bb |= this->boards[i].bb;
+        }
+        Bitboard bb(~none_bb);
+        return bb;
+
+    } else {
+        unsigned int i = (unsigned int)p;
+        return this->boards[i];
+    }
+}
+
+Bitboard Board::all_white_bb() const {
+    Bitboard bb;
+    for(uint i=0; i<6; i++) {
+        bb & this->boards[i];
+    }
+    return bb;
+}
+
+Bitboard Board::all_black_bb() const {
+    Bitboard bb;
+    for(uint i=6; i<12; i++) {
+        bb & this->boards[i];
+    }
+    return bb;
+}
+
 bool Board::make_move(Square orig, Square dest, MoveType type) {
-    return false;
+    Piece orig_p = this->get_piece_at(orig);
+    Piece dest_p = this->get_piece_at(dest);
+    (*this)[orig_p] ^= orig;
+    (*this)[dest_p] |= dest;
+    return true;
 }
 
 

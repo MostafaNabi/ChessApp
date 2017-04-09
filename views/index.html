@@ -7,11 +7,6 @@
     <script src="plugins/jquery.min.js"></script>
     <script src="plugins/bootstrap.min.js"></script>
     <script src='js/BoardView.js' type='text/javascript'></script>
-
-    <script type='text/javascript'>
-        SingleplayerBoardView = new BoardView('singleplayer_board_container');
-        TwoPlayerBoardView = new BoardView('twoplayer_board_container')
-    </script>
 </head>
 <body>
     <nav class=navbar-fixed-top>
@@ -75,6 +70,11 @@
         </div> <!-- close about container -->
 
 	</div>  <!-- close main body container -->
+
+    <script type='text/javascript'>
+            SinglePlayerBoardView = new BoardView('singleplayer', 'singleplayer_container');
+            TwoPlayerBoardView = new BoardView('twoplayer', 'twoplayer_container')
+    </script>
 
 </body>
 </html>
