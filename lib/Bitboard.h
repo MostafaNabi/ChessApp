@@ -40,7 +40,6 @@ public:
     };
 
 
-
     // ---- Constructors -----------
     Bitboard();
     Bitboard(uint64_t bb);
@@ -65,8 +64,14 @@ public:
     unsigned int to_rank(Square s);
     unsigned int to_file(Square s);
 
+    Bitboard north(Square s);
+    Bitboard south(Square s);
+    Bitboard east(Square s);
+    Bitboard west(Square s);
 
-    // ------- Bitboard Operators --------------
+
+
+    // ------- Boolean Operators --------------
     bool operator== (const Bitboard b) const;
     bool operator!= (const Bitboard b) const;
     bool operator! () const;
@@ -85,7 +90,7 @@ public:
     bool operator<= (const Bitboard b) const;
 
 
-
+    // ------- Bitboard Operators --------------
     Bitboard operator& (const Bitboard b) const;
     void operator&= (const Bitboard b);
 
@@ -94,6 +99,14 @@ public:
 
     Bitboard operator^ (const Bitboard b) const;
     void operator^= (const Bitboard b);
+
+    Bitboard operator~ () const;
+
+    Bitboard operator<< (int s);
+    void operator<<= (int s);
+    Bitboard operator>> (int s);
+    void operator>>= (int s);
+
 
     // ------- Square Operators --------------
     Bitboard operator& (const Square s) const;
@@ -105,6 +118,7 @@ public:
     Bitboard operator^ (const Square s) const;
     void operator^= (const Square s);
 
+    void pretty_print();
 
 
 private:

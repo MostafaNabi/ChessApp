@@ -55,6 +55,10 @@ namespace Moves {
     }
 
     Bitboard bishop_move_bb(Square s, Colour c, const Board& board) {
+        Bitboard move_bb;
+
+        // Get ray for square
+
         return Bitboard();
     }
 

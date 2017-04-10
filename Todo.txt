@@ -7,3 +7,40 @@ TODO
     should use the move bitboards and then process their own checks. These
     functions should not return bitboards but arrays/vectors of a custom type
     Move object.
+
+    For north, north east, east rays intersect with opponent pieces and get the LSB.
+    The intersect with own pieces, choose the result that is the smallest and use that
+    to find the last position to stop. The actual move bitboard would be ~LSB for same pieces
+    and ~LSB | LSB for opponent pieces.
+
+
+Dissertation Notes: 
+    To get the LSB for uints do (~x + 1).
+    Let x = 0100 1000
+       ~x = 1011 0111
+       +1 = 1011 1000
+    By adding 1 the final three 1s will carry over and be removed.
+    If the final digit in x was a 1 then:
+        x = 0100 1001
+       ~x = 1011 0110
+       +1 = 1011 0111
+    The plus 1 will always set the final bit in (~x)to be same
+    as in x.
+
+
+
+
+./lib/Chess.o: ./lib/Chess.cpp ./lib/Chess.h ./lib/Moves.h
+	$(CXX) $(CXXFLAGS) -c ./lib/Chess.cpp -o ./lib/Chess.o
+
+./lib/Moves.o: ./lib/Moves.cpp ./lib/Moves.h ./lib/Board.h
+	$(CXX) $(CXXFLAGS) -c ./lib/Moves.cpp -o ./lib/Moves.o
+
+./lib/Board.o: ./lib/Board.cpp ./lib/Board.h ./lib/Bitboard.h
+	$(CXX) $(CXXFLAGS) -c ./lib/Board.cpp -o ./lib/Board.o
+
+./lib/Bitboard.o: ./lib/Bitboard.cpp ./lib/Bitboard.h ./lib/Types.h
+	$(CXX) $(CXXFLAGS) -c ./lib/Bitboard.cpp -o ./lib/Bitboard.o
+
+./lib/Types.o: ./lib/Types.cpp ./lib/Types.h
+	$(CXX) $(CXXFLAGS) -c ./lib/Types.cpp -o ./lib/Types.o
