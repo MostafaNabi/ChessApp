@@ -5,7 +5,7 @@ namespace Types {
     const std::string DEFAULT_FEN = std::string("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 
     Colour get_piece_colour(Piece p) {
-        uint i = (int)p;
+        unsigned int i = (int)p;
         if(i < 6) {
             return WHITE;
         } else if(i > 5 && i < 12) {
@@ -16,7 +16,7 @@ namespace Types {
     }
 
     PieceType get_piece_type(Piece p) {
-        uint i = (int)p;
+        unsigned int i = (int)p;
         if(i == 0 || i == 6) {return KING;}
         if(i == 1 || i == 7) {return QUEEN;}
         if(i == 2 || i == 8) {return BISHOP;}

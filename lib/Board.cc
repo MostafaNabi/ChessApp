@@ -78,10 +78,8 @@ Board& Board::operator=(Board&& other) {
 
 // ------------- Board Operators ---------------------
 Piece Board::get_piece_at(Square s) const{
-    uint64_t i = 1;
-    uint64_t bb = i << s;
     for(int j=0; j<12; j++) {
-        if((boards[j].bb & bb) > 0) {
+        if( (this->boards[j] & s) > 0) {
             return (Piece)j;
         }
     }
@@ -89,25 +87,10 @@ Piece Board::get_piece_at(Square s) const{
 }
 
 
-Bitboard Board::operator[] (Piece p) const {
-    if(p == PIECE_NONE) {
-        uint64_t none_bb = 0;
-        for(int i=0; i<12; i++) {
-            none_bb |= this->boards[i].bb;
-        }
-        Bitboard bb(~none_bb);
-        return bb;
-
-    } else {
-        unsigned int i = (unsigned int)p;
-        return this->boards[i];
-    }
-}
-
 Bitboard Board::all_white_bb() const {
     Bitboard bb;
     for(uint i=0; i<6; i++) {
-        bb & this->boards[i];
+        bb |= this->boards[i];
     }
     return bb;
 }
@@ -115,16 +98,25 @@ Bitboard Board::all_white_bb() const {
 Bitboard Board::all_black_bb() const {
     Bitboard bb;
     for(uint i=6; i<12; i++) {
-        bb & this->boards[i];
+        bb |= this->boards[i];
     }
     return bb;
 }
 
 bool Board::make_move(Square orig, Square dest, MoveType type) {
-    Piece orig_p = this->get_piece_at(orig);
-    Piece dest_p = this->get_piece_at(dest);
-    (*this)[orig_p] ^= orig;
-    (*this)[dest_p] |= dest;
+    Piece orig_piece = this->get_piece_at(orig);
+    Piece dest_piece = this->get_piece_at(dest);
+    
+    Bitboard orig_piece_bb = this->boards[(unsigned int)orig_piece];
+    orig_piece_bb ^= orig;
+    orig_piece_bb ^= dest;
+    this->boards[(unsigned int)orig_piece] = orig_piece_bb;
+    
+    if(dest_piece != PIECE_NONE) {
+        Bitboard dest_piece_bb = this->boards[(unsigned int)dest_piece];
+        dest_piece_bb ^= dest;
+        this->boards[(unsigned int)dest_piece] = dest_piece_bb;
+    }
     return true;
 }
 

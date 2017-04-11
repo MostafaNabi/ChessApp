@@ -13,9 +13,24 @@ TODO
     to find the last position to stop. The actual move bitboard would be ~LSB for same pieces
     and ~LSB | LSB for opponent pieces.
 
+    Add ==,!= operators to bitboard for unsigned integers
+    
+    PAWN ATTACKS, ROOK NOT WORKING, PIECE TAKING NOT WORKING
+
+
+  00000000
+  00000000
+  00000000
+  00000000
+  00000000
+  00000001
+  00000001
+  00000000
+
+
 
 Dissertation Notes: 
-    To get the LSB for uints do (~x + 1).
+    To get the LSB for uints do (~x + 1) & x.
     Let x = 0100 1000
        ~x = 1011 0111
        +1 = 1011 1000
@@ -28,19 +43,5 @@ Dissertation Notes:
     as in x.
 
 
-
-
-./lib/Chess.o: ./lib/Chess.cpp ./lib/Chess.h ./lib/Moves.h
-	$(CXX) $(CXXFLAGS) -c ./lib/Chess.cpp -o ./lib/Chess.o
-
-./lib/Moves.o: ./lib/Moves.cpp ./lib/Moves.h ./lib/Board.h
-	$(CXX) $(CXXFLAGS) -c ./lib/Moves.cpp -o ./lib/Moves.o
-
-./lib/Board.o: ./lib/Board.cpp ./lib/Board.h ./lib/Bitboard.h
-	$(CXX) $(CXXFLAGS) -c ./lib/Board.cpp -o ./lib/Board.o
-
-./lib/Bitboard.o: ./lib/Bitboard.cpp ./lib/Bitboard.h ./lib/Types.h
-	$(CXX) $(CXXFLAGS) -c ./lib/Bitboard.cpp -o ./lib/Bitboard.o
-
-./lib/Types.o: ./lib/Types.cpp ./lib/Types.h
-	$(CXX) $(CXXFLAGS) -c ./lib/Types.cpp -o ./lib/Types.o
+    0010 0000 0000
+    1101 1111 1111

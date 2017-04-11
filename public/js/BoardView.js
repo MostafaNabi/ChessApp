@@ -139,18 +139,22 @@ BoardView.prototype.isSameColour = function(orig, dest) {
     return false;
 }
 
+BoardView.prototype.hasPiece = function(orig) {
+    return (this.isWhite(orig) || this.isBlack(orig));
+}
+
 
 BoardView.prototype.selectTile = function(x, y) {
     var self = this;
     var dest = self.getTile(x,y);
 
     // invalid selection
-    if(this.selected_tile == null && dest == null) {
+    if(this.selected_tile == null && !this.hasPiece(dest)) {
         return;
     }
 
     // new selection
-    if(this.selected_tile == null && dest != null) {
+    if(this.selected_tile == null && this.hasPiece(dest)) {
         if(this.isWhite(dest) && this.current_turn != 'white') {
             return;
         } else if(this.isBlack(dest) && this.current_turn != 'black') {
@@ -182,7 +186,10 @@ BoardView.prototype.selectTile = function(x, y) {
                 var resp = JSON.parse(xhr.response);
                 if(resp.moved) {
                     self.changeTurn();
-                    self.draw(resp.board);
+                    self.removeHighlight(self.selected_tile.x, self.selected_tile.y, 'selected_tile');
+                    self.setHighlight(x, y, 'last_moved_tile');
+                    self.selected_tile = null;
+                    self.drawPieces(resp.board);
                 }
             }
         }
@@ -219,7 +226,7 @@ BoardView.prototype.drawPieces = function(board) {
         var y = Math.floor(i / 8);
         var x = i % 8;
         var tile = this.getTile(x, y);
-
+        $(tile).removeClass();
         if((y % 2 == 0 && x % 2 == 0) || (y % 2 != 0 && x % 2 != 0)) {
             $(tile).addClass('black_board_tile');
         } else {

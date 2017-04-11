@@ -1,6 +1,7 @@
 #ifndef MOVES_H
 #define MOVES_H
 
+#include "Bitboard.h"
 #include "Board.h"
 
 namespace Moves {

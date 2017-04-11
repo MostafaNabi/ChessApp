@@ -35,8 +35,6 @@ public:
     // ---- Functions --------
     Piece get_piece_at(Square s) const;
 
-    Bitboard operator[] (Piece p) const;
-
     Bitboard all_white_bb() const;
     Bitboard all_black_bb() const;
 

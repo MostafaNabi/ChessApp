@@ -2,9 +2,6 @@
 #include <iostream>
 #include "Chess.h"
 
-typedef unsigned int uint;
-
-
 Chess::Chess(GameType g) {
     if(g == SINGLEPLAYER) {
         throw std::invalid_argument("Singleplayer games must be given an AI");
@@ -60,7 +57,6 @@ bool Chess::make_move(Square orig, Square dest) {
 
     // Validate move
     bool is_valid = Moves::is_valid_move(orig, col, dest, type, this->board);
-    std::cout << "Is valid: " << is_valid << std::endl;
     if(is_valid) {
         return this->board.make_move(orig, dest, type);
     } else {
