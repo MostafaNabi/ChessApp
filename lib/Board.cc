@@ -26,10 +26,6 @@ Board::Board() {
     this->b_castle_rights = 3;
 }
 
-Board::Board(std::string fen) {
-    std::cout << "Called Board FEN constructor with following value: " << fen << std::endl;
-    this->build_from_fen(fen);
-}
 
 // Copy and move constructors
 Board::Board(const Board& other) {

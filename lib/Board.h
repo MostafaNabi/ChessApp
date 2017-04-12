@@ -18,7 +18,6 @@ public:
 
     // ------- Constructors --------
     Board();
-    Board(std::string fen);
 
     // Copy and move constructors
     Board(const Board& other);

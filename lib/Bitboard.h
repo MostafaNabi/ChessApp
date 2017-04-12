@@ -78,13 +78,23 @@ public:
     // ------- Functions -----------
     uint64_t bitboard();
 
+    
+    // --------------- Rank and File -----------------------------
+    static Bitboard rank(Square s) {
+        return Bitboard::rank(Bitboard::to_rank(s));
+    }
+    
     static Bitboard rank(uint r) {
         if(r > 7) {
             throw std::out_of_range ("Given rank is out of range");
         }
         return Bitboard(Rank[r]);
     }
-
+    
+    static Bitboard file(Square s) {
+        return Bitboard::file(Bitboard::to_file(s));
+    }
+    
     static Bitboard file(uint f) {
         if(f > 7) {
             throw std::out_of_range ("Given file is out of range");
@@ -100,6 +110,13 @@ public:
         return (s % 8);
     }
 
+    
+    // --------------- Compass Bitmasks -----------------------------
+    /*
+     Left shift the bits in the file by the rank the square is on
+     + 1 to remove bits below and icluding the square the piece is on.
+     The shifted bits will drop of the uint.
+    */
     static Bitboard north(Square s) {
         unsigned int file_index = Bitboard::to_file(s);
         Bitboard file_bb = Bitboard::file(file_index);
@@ -145,7 +162,72 @@ public:
         uint file_index = Bitboard::to_file(s);
         rank_bb >>= (7-file_index+1);
         rank_bb &= Bitboard::rank(rank_index);
-        return rank_bb; 
+        return rank_bb;
+    }
+    
+    
+    // Loop until reaching boundary file/rank then stop
+    // Add last square on the boundary. If the square was on the boundary
+    // to begin with then the last square would be starting square, so remove it.
+    static Bitboard north_east(Square s) {
+        Bitboard bb;
+        Bitboard rank7 = Bitboard::rank(7);
+        Bitboard file7 = Bitboard::file(7);
+        
+        Square temp = s;
+        while( !(rank7 & temp) && !(file7 & temp) ) {
+            bb |= temp;
+            temp = Square(temp+9);
+        }
+        bb |= temp;
+        bb ^= s; // Remove current square
+        return bb;
+    }
+    
+    static Bitboard north_west(Square s) {
+        Bitboard bb;
+        Bitboard rank7 = Bitboard::rank(7);
+        Bitboard file0 = Bitboard::file(0);
+        
+        Square temp = s;
+        while( !(rank7 & temp) && !(file0 & temp) ) {
+            bb |= temp;
+            temp = Square(temp+7);
+        }
+        bb |= temp;
+        bb ^= s;
+        return bb;
+    }
+    
+    static Bitboard south_east(Square s) {
+        Bitboard bb;
+        Bitboard rank0 = Bitboard::rank(0);
+        Bitboard file7 = Bitboard::file(7);
+        
+        Square temp = s;
+        while( !(rank0 & temp) && !(file7 & temp) ) {
+            bb |= temp;
+            temp = Square(temp-7);
+        }
+
+        bb |= temp;
+        bb ^= s;
+        return bb;
+    }
+    
+    static Bitboard south_west(Square s) {
+        Bitboard bb;
+        Bitboard rank0 = Bitboard::rank(0);
+        Bitboard file0 = Bitboard::file(0);
+        
+        Square temp = s;
+        while( !(rank0 & temp) && !(file0 & temp) ) {
+            bb |= temp;
+            temp = Square(temp-9);
+        }
+        bb |= temp;
+        bb ^= s;
+        return bb;
     }
 
     // Return bitboard with only the lsb set

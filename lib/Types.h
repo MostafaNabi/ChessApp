@@ -10,9 +10,9 @@ enum GameType {
 
 
 enum Colour {
-    BLACK,
-    WHITE,
-    COLOUR_NONE
+    BLACK = 0,
+    WHITE = 1,
+    COLOUR_NONE = 2
 };
 
 enum PieceType {
@@ -42,7 +42,7 @@ enum Square {
     SQ_32, SQ_33, SQ_34, SQ_35, SQ_36, SQ_37, SQ_38, SQ_39,
     SQ_40, SQ_41, SQ_42, SQ_43, SQ_44, SQ_45, SQ_46, SQ_47,
     SQ_48, SQ_49, SQ_50, SQ_51, SQ_52, SQ_53, SQ_54, SQ_55,
-    SQ_56, SQ_57, SQ_58, SQ_59, SQ_60, SQ_61, SQ_62, SQ_63
+    SQ_56, SQ_57, SQ_58, SQ_59, SQ_60, SQ_61, SQ_62, SQ_63,
 };
 
 enum Direction {

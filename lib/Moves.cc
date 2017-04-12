@@ -35,11 +35,15 @@ namespace Moves {
     // Returns a move bitboard with pseudo-legal moves (No validation for checks)
     Bitboard king_move_bb(Square s, Colour c, const Board& board) {
         Bitboard move_bb;
-
-        if(!(Bitboard::rank(7) & s)) {move_bb |= Square(s+8);}
-        if(!(Bitboard::rank(0) & s)) {move_bb |= Square(s-8);}
-        if(!(Bitboard::file(7) & s)) {move_bb |= Square(s+1);}
-        if(!(Bitboard::file(0) & s)) {move_bb |= Square(s-1);}
+        move_bb |= Bitboard::lsb(Bitboard::north(s));
+        move_bb |= Bitboard::lsb(Bitboard::east(s));
+        move_bb |= Bitboard::msb(Bitboard::south(s));
+        move_bb |= Bitboard::msb(Bitboard::west(s));
+        
+        move_bb |= Bitboard::lsb(Bitboard::north_east(s));
+        move_bb |= Bitboard::lsb(Bitboard::north_west(s));
+        move_bb |= Bitboard::msb(Bitboard::south_east(s));
+        move_bb |= Bitboard::msb(Bitboard::south_west(s));
 
         Bitboard same_bb;
         if(c == WHITE ) {same_bb = board.all_white_bb();}
@@ -51,12 +55,25 @@ namespace Moves {
 
 
     Bitboard queen_move_bb(Square s, Colour c, const Board& board) {
-        return Bitboard();
+        Bitboard move_bb;
+        move_bb |= direction_mask(s, c, NORTH, board);
+        move_bb |= direction_mask(s, c, SOUTH, board);
+        move_bb |= direction_mask(s, c, EAST, board);
+        move_bb |= direction_mask(s, c, WEST, board);
+        move_bb |= direction_mask(s, c, NORTH_EAST, board);
+        move_bb |= direction_mask(s, c, NORTH_WEST, board);
+        move_bb |= direction_mask(s, c, SOUTH_EAST, board);
+        move_bb |= direction_mask(s, c, SOUTH_WEST, board);
+        return move_bb;
     }
 
     Bitboard bishop_move_bb(Square s, Colour c, const Board& board) {
         Bitboard move_bb;
-        return Bitboard();
+        move_bb |= direction_mask(s, c, NORTH_EAST, board);
+        move_bb |= direction_mask(s, c, NORTH_WEST, board);
+        move_bb |= direction_mask(s, c, SOUTH_EAST, board);
+        move_bb |= direction_mask(s, c, SOUTH_WEST, board);
+        return move_bb;
     }
 
 
@@ -167,6 +184,10 @@ namespace Moves {
             case EAST: return Bitboard::east(s);
             case SOUTH: return Bitboard::south(s);
             case WEST: return Bitboard::west(s);
+            case NORTH_EAST: return Bitboard::north_east(s);
+            case NORTH_WEST: return Bitboard::north_west(s);
+            case SOUTH_EAST: return Bitboard::south_east(s);
+            case SOUTH_WEST: return Bitboard::south_west(s);
             default: return Bitboard(0);
         }
     }
@@ -192,7 +213,7 @@ namespace Moves {
         Bitboard opp_intersect_point;
         Bitboard opp_intersect_mask;
         
-        if(d == NORTH || d == EAST) {
+        if(d == NORTH || d == EAST || d == NORTH_EAST || d == NORTH_WEST) {
             same_intersect_point = Bitboard::lsb(same_intersect);
             same_intersect_mask = Bitboard::lsb_mask(same_intersect_point) ^ same_intersect_point;
             
@@ -217,7 +238,7 @@ namespace Moves {
         }
         
         
-        if(d == NORTH || d == EAST) {
+        if(d == NORTH || d == EAST || d == NORTH_EAST || d == NORTH_WEST) {
             if(same_intersect_point < opp_intersect_point ) {
                 return (same_intersect_mask & dir_bb);
             
@@ -233,5 +254,4 @@ namespace Moves {
             }
         }
     }
-    
 }

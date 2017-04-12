@@ -13,10 +13,6 @@ TODO
     to find the last position to stop. The actual move bitboard would be ~LSB for same pieces
     and ~LSB | LSB for opponent pieces.
 
-    
-    Test king
-    Diagnol rays
-
 
 Dissertation Notes: 
     To get the LSB for uints do (~x + 1) & x.
@@ -32,5 +28,7 @@ Dissertation Notes:
     as in x.
 
 
-    0010 0000 0000
-    1101 1111 1111
+
+00000001
+00000010
+00000000
