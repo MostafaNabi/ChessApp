@@ -20,6 +20,12 @@ namespace Moves {
     Bitboard rook_move_bb   (Square s, Colour c, const Board& board);
     Bitboard pawn_move_bb   (Square s, Colour c, const Board& board);
     Bitboard pawn_attack_bb (Square s, Colour c, const Board& board);
+    
+    
+    Bitboard direction_bb(Square s, Direction d);
+    Bitboard direction_mask(Square s, Colour c, Direction d, const Board& board);
+
+
 
 }
 #endif

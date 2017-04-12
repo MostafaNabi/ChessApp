@@ -13,20 +13,9 @@ TODO
     to find the last position to stop. The actual move bitboard would be ~LSB for same pieces
     and ~LSB | LSB for opponent pieces.
 
-    Add ==,!= operators to bitboard for unsigned integers
     
-    PAWN ATTACKS, ROOK NOT WORKING, PIECE TAKING NOT WORKING
-
-
-  00000000
-  00000000
-  00000000
-  00000000
-  00000000
-  00000001
-  00000001
-  00000000
-
+    Test king
+    Diagnol rays
 
 
 Dissertation Notes: 

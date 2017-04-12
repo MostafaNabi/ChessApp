@@ -153,54 +153,76 @@ public:
         return Bitboard( ((~b.bb)+1) & b.bb );
     }
 
-    // Return bitboard with only the lsb set
+    // Return bitboard with only the msb set
     static Bitboard msb(const Bitboard& b) {
-        uint64_t msb = 1;
         unsigned int msb_index = Bitboard::msb_index(b);
-        return Bitboard(msb << msb_index);
+        if(msb_index == 0) {
+            return Bitboard();
+        }
+        
+        uint64_t msb = 1;
+        return Bitboard(msb << (msb_index - 1));
     }
-
-
-    // Create new bitboard with only the lsb set
-    // At this point the lsb is also the msb
-    // 0-based index
+    
+    // 1 - based index for the lsb position
     static unsigned int lsb_index(const Bitboard& b) {
         Bitboard lsb = Bitboard::lsb(b);
         return Bitboard::msb_index(lsb);
     }
-
-    // Get position of the msb
+    
+    
+    // 1 - based index for the msb position
     static unsigned int msb_index(const Bitboard& b) {
-        Bitboard msb = b;
+        Bitboard temp = b;
         unsigned int c = 0;
-        while(msb > 1) {
-            msb >>= 1;
+        while(temp > 0) {
+            temp >>= 1;
             c++;
         }
         return c;
     }
+    
+    
+    // ----------------------------------
+    static Bitboard lsb_mask(const Bitboard& b) {
+        return Bitboard::lsb_mask(Bitboard::lsb_index(b));
+    }
 
     // Sets every bit <= the lsb in the given bitboard
     static Bitboard lsb_mask(unsigned int index) {
-        if(index > 63) {
-            throw std::out_of_range ("Bit index is 0-based up to 63");
+        if(index > 64) {
+            throw std::out_of_range ("Bit index is 1-based up to 64");
+        }
+        
+        if(index == 0) {
+            return Bitboard();
         }
         uint64_t mask = 1;
-        while(index > 0) {
+        while(index > 1) {
             index--;
             mask |= mask << 1;
         }
         return Bitboard(mask);
     }
 
+    static Bitboard msb_mask(const Bitboard& b) {
+        return Bitboard::msb_mask(Bitboard::msb_index(b));
+    }
+
     // Sets every bit >= the msb in the given bitboard
     static Bitboard msb_mask(unsigned int index) {
-        if(index > 63) {
-            throw std::out_of_range ("Bit index is 0-based up to 63");
+        if(index > 64) {
+            throw std::out_of_range ("Bit index is 1-based up to 63");
         }
+        
+        if(index == 0) {
+            return Bitboard();
+        }
+        
+        unsigned int i = 64 - (index - 1);
         uint64_t mask = 0x8000000000000000;
-        while(index > 0) {
-            index--;
+        while(i > 1) {
+            i--;
             mask |= mask >> 1;
         }
         return Bitboard(mask);

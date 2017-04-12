@@ -27,7 +27,7 @@ namespace Moves {
             case BISHOP: return bishop_move_bb(s, c, board);
             case KNIGHT: return knight_move_bb(s, c, board);
             case ROOK:   return rook_move_bb(s, c, board);
-            case PAWN:   return pawn_move_bb(s, c, board);
+            case PAWN:   return (pawn_move_bb(s, c, board) | pawn_attack_bb(s, c, board));
             case PIECETYPE_NONE : return Bitboard();
         }
     }
@@ -97,65 +97,24 @@ namespace Moves {
 
     Bitboard rook_move_bb(Square s, Colour c, const Board& board) {
         Bitboard move_bb;
-        Bitboard same_bb;
-        Bitboard opp_bb;
-        if(c == WHITE) {same_bb = board.all_white_bb(); opp_bb = board.all_black_bb();}
-        else {same_bb = board.all_black_bb(); opp_bb = board.all_white_bb();}
-
-        Bitboard north = Bitboard::north(s);
-        Bitboard south = Bitboard::south(s);
-        Bitboard east = Bitboard::east(s);
-        Bitboard west = Bitboard::west(s);
-        
-        // !!!!! Need to get least significant bit that is the smallest !!!!!
-        // -------------------- North --------------------------------
-        
-        if( Bitboard::lsb(north & same_bb) < Bitboard::lsb(north & opp_bb)) {
-            Bitboard intersection = north & same_bb;
-            unsigned int lsb_index = Bitboard::lsb_index(intersection);
-            Bitboard mask = Bitboard::lsb_mask(lsb_index) ^ Bitboard::lsb(intersection);
-            move_bb |= mask & north;
-        
-        } else {
-            Bitboard intersection = north & opp_bb;
-            if(intersection == 0) {
-                move_bb |= north;
-            } else {
-                unsigned int lsb_index = Bitboard::lsb_index(intersection);
-                move_bb |= Bitboard::lsb_mask(lsb_index) & north;
-            }
-        }
-
-        // -------------------- South --------------------------------
-        if( Bitboard::lsb(south & same_bb) > Bitboard::lsb(south & opp_bb)) {
-            Bitboard intersection = south & same_bb;
-            unsigned int msb_index = Bitboard::msb_index(intersection);
-            Bitboard mask = Bitboard::msb_mask(msb_index) ^ Bitboard::msb(intersection);
-            move_bb |= mask & south;
-            
-        } else {
-            Bitboard intersection = south & opp_bb;
-            if(intersection == 0) {
-                move_bb |= south;
-            } else {
-                unsigned int msb_index = Bitboard::msb_index(intersection);
-                move_bb |= Bitboard::msb_mask(msb_index) & south;
-            }
-        }
+        move_bb |= direction_mask(s, c, NORTH, board);
+        move_bb |= direction_mask(s, c, SOUTH, board);
+        move_bb |= direction_mask(s, c, EAST, board);
+        move_bb |= direction_mask(s, c, WEST, board);
         return move_bb;
     }
 
-
+    
     Bitboard pawn_move_bb(Square s, Colour c, const Board& board) {
         Bitboard move_bb;
         Bitboard all_bb = (board.all_black_bb() | board.all_white_bb());
-
+        
         // No checks for occupency except moving two squares, do checks at the end by complementing with all_bb
         if(c == WHITE) {
             if(!(Bitboard::rank(7) & s)) {
                 move_bb |= Square(s+8);
             }
-
+            
             if( (Bitboard::rank(1) & s) && !(all_bb & Square(s+8)) ) {
                 move_bb |= Square(s+16);
             }
@@ -167,16 +126,16 @@ namespace Moves {
                 move_bb |= Square(s-16);
             }
         }
-
+        
         // remove positons that would overlap with other pieces
         return Bitboard(move_bb ^ (move_bb & all_bb));
     }
-
+    
     Bitboard pawn_attack_bb(Square s, Colour c, const Board& board) {
         Bitboard atk_bb;
-
+        
         if(c == WHITE) {
-            if(!(atk_bb.rank(7) & s)) {
+            if(!(Bitboard::rank(7) & s)) {
                 if(!(atk_bb.file(0) & s)) {atk_bb |= Square(s+7);}
                 if(!(atk_bb.file(7) & s)) {atk_bb |= Square(s+9);}
             }
@@ -187,11 +146,92 @@ namespace Moves {
             }
         }
         Bitboard same_bb;
-        if(c == WHITE ) {same_bb = board.all_white_bb();}
-        else {same_bb = board.all_black_bb();}
-
+        Bitboard opp_bb;
+        if(c == WHITE ) {same_bb = board.all_white_bb(); opp_bb = board.all_black_bb();}
+        else {same_bb = board.all_black_bb(); opp_bb = board.all_white_bb();}
+        
         // remove positons that would overlap with own pieces
+        atk_bb &= opp_bb;
         return Bitboard(atk_bb ^ (atk_bb & same_bb));
     }
 
+
+    
+    
+    // ------------ Utility Functions ------------------
+    
+    
+    Bitboard direction_bb(Square s, Direction d) {
+        switch(d) {
+            case NORTH: return Bitboard::north(s);
+            case EAST: return Bitboard::east(s);
+            case SOUTH: return Bitboard::south(s);
+            case WEST: return Bitboard::west(s);
+            default: return Bitboard(0);
+        }
+    }
+    
+        
+    Bitboard direction_mask(Square s, Colour c, Direction d, const Board& board) {
+        Bitboard dir_bb = direction_bb(s, d);
+        Bitboard same_bb;
+        Bitboard opp_bb;
+        if(c == WHITE) {same_bb = board.all_white_bb(); opp_bb = board.all_black_bb();}
+        else {same_bb = board.all_black_bb(); opp_bb = board.all_white_bb();}
+        
+        Bitboard same_intersect = dir_bb & same_bb;
+        Bitboard opp_intersect  = dir_bb & opp_bb;
+        
+        if( same_intersect == 0 && opp_intersect == 0) {
+            return dir_bb;
+        }
+        
+        Bitboard same_intersect_point;
+        Bitboard same_intersect_mask;
+        
+        Bitboard opp_intersect_point;
+        Bitboard opp_intersect_mask;
+        
+        if(d == NORTH || d == EAST) {
+            same_intersect_point = Bitboard::lsb(same_intersect);
+            same_intersect_mask = Bitboard::lsb_mask(same_intersect_point) ^ same_intersect_point;
+            
+            opp_intersect_point = Bitboard::lsb(opp_intersect);
+            opp_intersect_mask = Bitboard::lsb_mask(opp_intersect_point);
+            
+        } else {
+            same_intersect_point = Bitboard::msb(same_intersect);
+            same_intersect_mask = Bitboard::msb_mask(same_intersect_point) ^ same_intersect_point;
+            
+            opp_intersect_point = Bitboard::msb(opp_intersect);
+            opp_intersect_mask = Bitboard::msb_mask(opp_intersect_point);
+        }
+        
+        
+        if( same_intersect_point != 0 && opp_intersect_point  == 0) {
+            return (same_intersect_mask & dir_bb);
+        }
+        
+        if( same_intersect_point == 0 && opp_intersect_point  != 0) {
+            return (opp_intersect_mask & dir_bb);
+        }
+        
+        
+        if(d == NORTH || d == EAST) {
+            if(same_intersect_point < opp_intersect_point ) {
+                return (same_intersect_mask & dir_bb);
+            
+            } else {
+                return (opp_intersect_mask & dir_bb);
+            }
+        } else {
+            if(same_intersect_point > opp_intersect_point ) {
+                return (same_intersect_mask & dir_bb);
+                
+            } else {
+                return (opp_intersect_mask & dir_bb);
+            }
+        }
+    }
+    
 }

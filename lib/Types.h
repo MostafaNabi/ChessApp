@@ -45,7 +45,7 @@ enum Square {
     SQ_56, SQ_57, SQ_58, SQ_59, SQ_60, SQ_61, SQ_62, SQ_63
 };
 
-enum Directions {
+enum Direction {
     NORTH = 8, EAST = 1, SOUTH = -8, WEST = -1,
     NORTH_EAST = 9, NORTH_WEST = 7, SOUTH_EAST = -7, SOUTH_WEST = -9
 };

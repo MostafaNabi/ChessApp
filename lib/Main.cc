@@ -8,10 +8,9 @@ using std::endl;
 
 int main() {
     Chess chess(SINGLEPLAYER, 2);
-    cout << "Moved 8,24: " << chess.make_move(SQ_8, SQ_24) << endl;
-    cout << "Moved 0,16: " << chess.make_move(SQ_0, SQ_16) << endl;
-    cout << "Moved 16,0: " << chess.make_move(SQ_16, SQ_0) << endl;
-
+    cout << "Moved 12,28: " << chess.make_move(SQ_12, SQ_28) << endl;
+    cout << "Moved 63,15: " << chess.make_move(SQ_63, SQ_15) << endl; // ERROR
+ 
     std::vector<Piece> v = chess.retrieve_board();
 
     for(int i=0; i<v.size(); i++) {
