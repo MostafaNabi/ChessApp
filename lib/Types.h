@@ -15,23 +15,30 @@ enum Colour {
     COLOUR_NONE = 2
 };
 
+enum Result {
+    INVALID_MOVE, VALID_MOVE, PROMOTE_PAWN, CHECK, CHECKMATE
+};
+
 enum PieceType {
     KING, QUEEN, BISHOP, KNIGHT, ROOK, PAWN, PIECETYPE_NONE
 };
 
 enum Piece {
-    W_KING, W_QUEEN, W_BISHOP, W_KNIGHT, W_ROOK, W_PAWN, // 0 - 5
-    B_KING, B_QUEEN, B_BISHOP, B_KNIGHT, B_ROOK, B_PAWN,  // 6 - 11
+    WHITE_KING, WHITE_QUEEN, WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK, WHITE_PAWN, // 0 - 5
+    BLACK_KING, BLACK_QUEEN, BLACK_BISHOP, BLACK_KNIGHT, BLACK_ROOK, BLACK_PAWN,  // 6 - 11
     PIECE_NONE
 };
 
 enum MoveType {
-    NORMAL, CASTLE, PROMOTION, ENPASSANT
+    NORMAL, CASTLE, ENPASSANT, PAWN_PROMOTION
 };
 
-enum CastlingSide {
-    KINGSIDE = 1, QUEENSIDE = 2
+enum CastlingRights {
+    WHITE_KING_CR = 4, WHITE_KINGSIDE_CR = 6, WHITE_QUEENSIDE_CR = 2,
+    BLACK_KING_CR = 60, BLACK_KINGSIDE_CR = 62, BLACK_QUEENSIDE_CR = 58
 };
+
+
 
 
 enum Square {
@@ -53,6 +60,8 @@ enum Direction {
 
 namespace Types {
     extern const std::string DEFAULT_FEN;
+    extern const Piece ALL_WHITE_PIECES[6];
+    extern const Piece ALL_BLACK_PIECES[6];
 
     Colour get_piece_colour(Piece p);
     PieceType get_piece_type(Piece p);
@@ -60,5 +69,16 @@ namespace Types {
     std::string replace_all_char(std::string s, char c, char n);
     std::string replace_all_char(std::string s, char c, std::string n);
 }
+
+
+struct Move {
+    Square origin;
+    Square destination;
+    
+    Move(Square orig, Square dest) {
+        this->origin = orig;
+        this->destination = dest;
+    }
+};
 
 #endif

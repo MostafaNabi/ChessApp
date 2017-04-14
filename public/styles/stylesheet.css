@@ -8,6 +8,38 @@
     background-color: red;
 }
 
+.popup {
+    display: block;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    background-color: grey;
+}
+
+.white_pawn_promotion {
+    display: flex;
+    position: relative;
+    width: 300px;
+    height: 100%;
+    margin: auto;
+    align-items: center;
+}
+
+.black_pawn_promotion {
+    display: flex;
+    position: relative;
+    width: 300px;
+    height: 100%;
+    margin: auto;
+    align-items: center;
+}
+
+.pawn_promotion_piece {
+    display: inline-block;
+    position: relative;
+}
 
 .row {
     display: flex;
@@ -80,50 +112,73 @@
 }
 
 .chess_piece_black_king {
+    width: 60px;
+    height: 60px;
     background-image: url('/images/chess_images/black_king.png');
 }
 
 .chess_piece_black_queen {
+    width: 60px;
+    height: 60px;
     background-image: url('/images/chess_images/black_queen.png');
 }
 
 .chess_piece_black_bishop {
+    width: 60px;
+    height: 60px;
     background-image: url('/images/chess_images/black_bishop.png');
 }
 
 .chess_piece_black_knight {
+    width: 60px;
+    height: 60px;
     background-image: url('/images/chess_images/black_knight.png');
 }
 
 .chess_piece_black_rook {
+    width: 60px;
+    height: 60px;
     background-image: url('/images/chess_images/black_rook.png');
 }
 
 .chess_piece_black_pawn {
+    width: 60px;
+    height: 60px;
     background-image: url('/images/chess_images/black_pawn.png');
 }
 .chess_piece_white_king {
+    width: 60px;
+    height: 60px;
     background-image: url('/images/chess_images/white_king.png');
 }
 
 .chess_piece_white_queen {
+    width: 60px;
+    height: 60px;
     background-image: url('/images/chess_images/white_queen.png');
 }
 
 .chess_piece_white_bishop {
-
+    width: 60px;
+    height: 60px;
     background-image: url('/images/chess_images/white_bishop.png');
 }
 
 .chess_piece_white_knight {
+    width: 60px;
+    height: 60px;
     background-image: url('/images/chess_images/white_knight.png');
 }
 
 .chess_piece_white_rook {
+    width: 60px;
+    height: 60px;
     background-image: url('/images/chess_images/white_rook.png');
 }
 
 .chess_piece_white_pawn {
+    width: 60px;
+    height: 60px;
     background-image: url('/images/chess_images/white_pawn.png');
 }
 
@@ -144,7 +199,11 @@
 
 
 
-
+.message {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+}
 
 .chess_options_container {
     display: block;

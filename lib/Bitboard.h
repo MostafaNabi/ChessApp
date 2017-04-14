@@ -9,6 +9,7 @@
 
 #include <stdexcept>
 #include <stdint.h>
+#include <vector>
 #include "Types.h"
 
 class Bitboard {
@@ -38,26 +39,6 @@ public:
         0x4040404040404040,
         0x8080808080808080
     };
-        // 0100 0000
-    /*static constexpr uint64_t BitPositions[64] {
-        0x0000000000000001, 0x0000000000000002, 0x0000000000000004, 0x0000000000000008, // 3
-        0x0000000000000010, 0x0000000000000020, 0x0000000000000040, 0x0000000000000080, // 7
-        0x0000000000000100, 0x0000000000000200, 0x0000000000000400, 0x0000000000000800, // 11,
-        0x0000000000001000, 0x0000000000002000, 0x0000000000004000, 0x0000000000008000, // 15
-        0x0000000000010000, 0x0000000000020000, 0x0000000000040000, 0x0000000000080000, // 19
-        0x0000000000100000, 0x0000000000200000, 0x0000000000400000, 0x0000000000800000, // 23
-        0x0000000001000000, 0x0000000002000000, 0x0000000004000000, 0x0000000008000000, // 27
-        0x0000000010000000, 0x0000000020000000, 0x0000000040000000, 0x0000000080000000, // 31
-        0x0000000100000000, 0x0000000200000000, 0x0000000400000000, 0x0000000800000000, // 35
-        0x0000001000000000, 0x0000002000000000, 0x0000004000000000, 0x0000008000000000, // 39
-        0x0000010000000000, 0x0000020000000000, 0x0000040000000000, 0x0000080000000000, // 43
-        0x0000100000000000, 0x0000200000000000, 0x0000400000000000, 0x0000800000000000, // 47
-        0x0001000000000000, 0x0002000000000000, 0x0004000000000000, 0x0008000000000000, // 51
-        0x0010000000000000, 0x0020000000000000, 0x0040000000000000, 0x0080000000000000, // 55
-        0x0100000000000000, 0x0200000000000000, 0x0400000000000000, 0x0800000000000000, // 59
-        0x1000000000000000, 0x2000000000000000, 0x4000000000000000, 0x8000000000000000, // 63
-    }
-*/
 
 
     // ---- Constructors -----------
@@ -76,7 +57,7 @@ public:
     Bitboard& operator=(Bitboard&& other);
 
     // ------- Functions -----------
-    uint64_t bitboard();
+    uint64_t bitboard() const;
 
     
     // --------------- Rank and File -----------------------------
@@ -309,6 +290,17 @@ public:
         }
         return Bitboard(mask);
     }
+    
+    static std::vector<Square> all_bit_indexes(Bitboard b) {
+        std::vector<Square> list;
+        while(b != 0) {
+            unsigned int index = lsb_index(b);
+            Square s = (Square) (index - 1);
+            list.push_back(s);
+            b ^= s;
+        }
+        return list;
+    }
 
 
     // ------- Boolean Operators --------------
@@ -353,14 +345,25 @@ public:
 
 
     // ------- Square Operators --------------
-    Bitboard operator& (const Square s) const;
-    void operator&= (const Square s);
+    Bitboard operator& (Square s) const;
+    void operator&= (Square s);
 
-    Bitboard operator| (const Square s) const;
-    void operator|= (const Square s);
+    Bitboard operator| (Square s) const;
+    void operator|= (Square s);
 
-    Bitboard operator^ (const Square s) const;
-    void operator^= (const Square s);
+    Bitboard operator^ (Square s) const;
+    void operator^= (Square s);
+    
+    // ------- CastlingRights Operators --------------
+    Bitboard operator& (CastlingRights cr) const;
+    void operator&= (CastlingRights cr);
+    
+    Bitboard operator| (CastlingRights cr) const;
+    void operator|= (CastlingRights cr);
+    
+    Bitboard operator^ (CastlingRights cr) const;
+    void operator^= (CastlingRights cr);
+
 
     void pretty_print();
 

@@ -14,38 +14,83 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/views/index.html');
 });
 
-// Receive FEN description of Board as data
-// Return 2D array with pieces in it, as BoardView does
-// not hold ANY logic, only displays the board.
-app.get('/singleplayer/build_from_fen', function (req, res) {
-    // var res = WebInterface.make_move();
-});
-
-app.get('/singleplayer/make_move', function (req, res) {
-    var orig_square = parseInt(req.query.orig);
-    var dest_square = parseInt(req.query.dest);
-    console.log("Got parameters", orig_square, dest_square);
-    var moved = single_wi.make_move(orig_square, dest_square);
-    var resp = {}
-    if(moved) {
-        var resp = JSON.parse(single_wi.retrieve_board());
-        resp.moved = true;
-        res.json(resp);
-    } else {
-        resp.moved = false;
-        res.json(resp);
-    }
-});
 
 app.get('/singleplayer/retrieve_board', function (req, res) {
     res.send(single_wi.retrieve_board());
 });
 
+app.get('/singleplayer/build_from_fen', function (req, res) {
+});
+
+app.get('/singleplayer/make_move', function (req, res) {
+    var orig_square = parseInt(req.query.orig);
+    var dest_square = parseInt(req.query.dest);
+    var result = single_wi.make_move(orig_square, dest_square);
+    var str = 'cout << "Moved ' + orig_square + ', ' + dest_square + '" << ';
+    str += 'chess.make_move(SQ_' + orig_square + ', SQ_' + dest_square + ') << endl;';
+    console.log(str);    if(result != 0) {
+        var resp = JSON.parse(single_wi.retrieve_board());
+        resp.result = result;
+        res.json(resp);
+    } else {
+        res.json({result: 0});
+    }
+});
+
+app.get('/singleplayer/promote_pawn', function (req, res) {
+    var piece = res.query.piece;
+    var square = res.query.square;
+    console.log("pawn promotion: square="+square + ", piece=" + piece);
+    var resp = {};
+    result = single_wi.promote_pawn(square, piece);
+    if(result) {
+        var resp = JSON.parse(single_wi.retrieve_board());
+        resp.promoted = true;
+        res.json(resp);
+    } else {
+        res.json({promoted : false})
+    }
+});
+
+
+app.get('/twoplayer/retrieve_board', function (req, res) {
+    res.send(two_wi.retrieve_board());
+});
+
+
 app.get('/twoplayer:build_from_fen', function (req, res) {
 });
 
 app.get('/twoplayer/make_move', function (req, res) {
-    // var res = WebInterface.make_move();
+    var orig_square = parseInt(req.query.orig);
+    var dest_square = parseInt(req.query.dest);
+    var result = two_wi.make_move(orig_square, dest_square);
+    
+    var str = "cout << Moved " + orig_square + ", " + dest_square + " << ";
+    str += "chess.make_move(" + orig_square + ", " + dest_square + ") << endl;";
+    console.log(str);
+    if(result != 0) {
+        var resp = JSON.parse(two_wi.retrieve_board());
+        resp.result = result;
+        res.json(resp);
+    } else {
+        res.json({result: 0});
+    }
+});
+
+app.get('/twoplayer/promote_pawn', function (req, res) {
+    var piece = res.query.piece;
+    var square = res.query.square;
+    console.log("pawn promotion: square="+square + ", piece=" + piece);
+    var resp = {};
+    result = two_wi.promote_pawn(square, piece);
+    if(result) {
+        var resp = JSON.parse(two_wi.retrieve_board());
+        resp.promoted = true;
+        res.json(resp);
+    } else {
+        res.json({promoted : false})
+    }
 });
 
 app.listen(8080, function () {

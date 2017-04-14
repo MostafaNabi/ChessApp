@@ -50,19 +50,75 @@ void Chess::set_ai_difficulty(int ai) {
     // set AI
 }
 
-bool Chess::make_move(Square orig, Square dest) {
-    // Determine move type
-    Colour col = Moves::infer_player_colour(orig, this->board);
-    MoveType type = Moves::infer_move_type(orig, col, dest, this->board);
-
-    // Validate move
-    bool is_valid = Moves::is_valid_move(orig, col, dest, type, this->board);
-    if(is_valid) {
-        return this->board.make_move(orig, dest, type);
+/*
+ Do checks  for CHECK and CHECKMATE to see if
+ the opponent is in check, do a checkmate beforehand
+ so opponent cannot move after being checkmated
+*/
+Result Chess::make_move(Square orig, Square dest) {
+    Colour c = this->board.infer_player_colour(orig);
+    Colour opp_c = (c == WHITE) ? BLACK : WHITE;
+    if(Moves::is_in_checkmate(c, this->board)) {
+        return INVALID_MOVE;
+    }
+    
+    Move move = Move(orig, dest);
+    MoveType move_type = Moves::infer_move_type(move, this->board);
+    
+    bool is_valid = Moves::is_valid_move(move, this->board);
+    if(!is_valid) {
+        return INVALID_MOVE;
+    }
+    
+    switch(move_type) {
+        case NORMAL: this->board.move_piece(move); break;
+            
+        case CASTLE: {
+            CastlingRights cs = (CastlingRights)move.destination;
+            this->board.castle(cs); break;
+        }
+            
+        case PAWN_PROMOTION: {
+            // Move pawn then request user input to promote it
+            this->board.move_piece(move);
+            break;
+        }
+            
+        default: this->board.move_piece(move);
+    }
+    
+    this->board.update_turn();
+    
+    if(move_type == PAWN_PROMOTION) {
+        return PROMOTE_PAWN;
+        
+    } else if(Moves::is_in_checkmate(opp_c, board)) {
+        return CHECKMATE;
+        
+    } else if(Moves::is_in_check(opp_c, this->board)) {
+        return CHECK;
+        
     } else {
-        return false;
+        return VALID_MOVE;
     }
 }
+
+// Given the square the pawn is on after having been moved,
+// Do another check and then promote it to the given piece
+bool Chess::promote_pawn(Square s, Piece piece) {
+    if(!Moves::can_promote_pawn(s, this->board)) {
+        return false;
+    }
+    
+    PieceType type = Types::get_piece_type(piece);
+    if(type == PIECETYPE_NONE || type == PAWN) {
+        return false;
+    }
+    
+    this->board.promote_pawn(s, piece);
+    return true;
+}
+
 
 
 std::vector<Piece> Chess::retrieve_board() {

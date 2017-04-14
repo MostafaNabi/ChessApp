@@ -4,6 +4,8 @@ function BoardView(game_type, container_id) {
     this.url = '/'+game_type;
     this.container_id = container_id;
     this.selected_tile = null; // {div, x, y}
+    this.last_moved_square = null;
+    this.pawn_promotion = null;
     this.current_turn = 'white';
 
     this.piece_map = {
@@ -22,6 +24,8 @@ function BoardView(game_type, container_id) {
         11:'chess_piece_black_pawn',
         12:'chess_piece_none'
     }
+
+    this.popup = document.createElement('div');
     this.init();
 }
 
@@ -34,9 +38,28 @@ BoardView.prototype.changeTurn = function() {
 }
 
 BoardView.prototype.init = function() {
+    var self = this;
+    this.popup.style.display = 'none';
+    this.popup.id = 'user_input_popup';
+    this.popup.className = 'popup';
+    this.popup.innerHTML =  "<div class='white_pawn_promotion'>" +
+                                "<div class='chess_piece_white_queen' onclick='self.promote_pawn(1)'></div>" +
+                                "<div class='chess_piece_white_bishop' onclick='self.promote_pawn(2)'></div>" +
+                                "<div class='chess_piece_white_knight' onclick='self.promote_pawn(3)'></div>" +
+                                "<div class='chess_piece_white_rook' onclick='self.promote_pawn(4)'></div>" +
+                            "</div>" +
+                            "<div class='black_pawn_promotion'>" +
+                                "<div class='chess_piece_black_queen' onclick='self.promote_pawn(7)'></div>" +
+                                "<div class='chess_piece_black_bishop' onclick='self.promote_pawn(8)'></div>" +
+                                "<div class='chess_piece_black_knight' onclick='self.promote_pawn(9)'></div>" +
+                                "<div class='chess_piece_black_rook' onclick='self.promote_pawn(10)'></div>" +
+                            "</div>";
+    $(this.popup).find('.white_pawn_promotion').hide();
+    $(this.popup).find('.black_pawn_promotion').hide();
+    document.getElementById(this.container_id).appendChild(this.popup);
+
     this.setupBoard();
 }
-
 
 BoardView.prototype.setupBoard = function(fen) {
     // Set up chess board
@@ -106,11 +129,11 @@ BoardView.prototype.removeAllHighlight = function(highlight) {
 }
 
 BoardView.prototype.isWhite = function(tile) {
-    var white = ['chess_piece_white_king','chess_piece_white_queen','chess_piece_white_bishop',
+    var black = ['chess_piece_white_king','chess_piece_white_queen','chess_piece_white_bishop',
                 'chess_piece_white_knight','chess_piece_white_rook','chess_piece_white_pawn'];
 
-    for(var i=0; i<white.length; i++) {
-        if(tile.classList.contains(white[i])) {
+    for(var i=0; i<black.length; i++) {
+        if(tile.classList.contains(black[i])) {
             return true;
         }
     }
@@ -176,7 +199,8 @@ BoardView.prototype.selectTile = function(x, y) {
     // convert y,x co-ordinates into square number starting from 0
     var orig_square = (8*this.selected_tile.y) + this.selected_tile.x;
     var dest_square = (8*y) + x;
-
+    var move = {src_x: this.selected_tile.x, src_y: this.selected_tile.y,
+                dest_x: x, dest_y: y}
     // send ajax request to move
     var xhr = new XMLHttpRequest();
     xhr.open('GET', this.url + '/make_move?orig='+orig_square+'&dest='+dest_square, true);
@@ -184,19 +208,87 @@ BoardView.prototype.selectTile = function(x, y) {
         if(xhr.readyState === XMLHttpRequest.DONE) {
             if(xhr.status === 200) {
                 var resp = JSON.parse(xhr.response);
-                if(resp.moved) {
-                    self.changeTurn();
-                    self.removeHighlight(self.selected_tile.x, self.selected_tile.y, 'selected_tile');
-                    self.setHighlight(x, y, 'last_moved_tile');
-                    self.selected_tile = null;
-                    self.drawPieces(resp.board);
-                }
+                self.parse_response(move, resp);
             }
         }
     }
     xhr.send();
 };
 
+BoardView.prototype.parse_response= function(move, resp) {
+    // INVALID_MOVE
+    if(resp.result == 0) {
+        return;
+    }
+    var src_x = move.src_x;
+    var src_y = move.src_y;
+
+    var dest_x = move.dest_x;
+    var dest_y = move.dest_y;
+
+    this.last_moved_square = (8*dest_y) + dest_x;
+
+    // normal move
+    if(resp.result == 1) {
+        $('#'+this.container_id + ' .message')[0].innerHTML = 'Normal Move!';
+        this.changeTurn();
+        this.removeHighlight(src_x, src_y, 'selected_tile');
+        this.setHighlight(dest_x, dest_y, 'last_moved_tile');
+        this.selected_tile = null;
+        this.drawPieces(resp.board);
+    }
+
+    // pawn promotion
+    if(resp.result == 2) {
+        $('#'+this.container_id + ' .message')[0].innerHTML = 'Pawn Promotion!';
+        $(this.popup).show();
+        $(this.popup).find('.'+this.current_turn+'_pawn_promotion').show();
+    }
+
+    // check
+    if(resp.result == 3) {
+        $('#'+this.container_id + ' .message')[0].innerHTML = 'Check!';
+        this.changeTurn();
+        this.removeHighlight(src_x, src_y, 'selected_tile');
+        this.setHighlight(dest_x, dest_y, 'last_moved_tile');
+        this.selected_tile = null;
+        this.drawPieces(resp.board);
+    }
+
+
+    // check mate
+    if(resp.result == 4) {
+        $('#'+this.container_id + ' .message')[0].innerHTML = 'CheckMate!';
+        this.removeHighlight(src_x, src_y, 'selected_tile');
+        this.setHighlight(dest_x, dest_y, 'last_moved_tile');
+        this.selected_tile = null;
+        this.drawPieces(resp.board);
+    }
+}
+
+
+BoardView.prototype.promote_pawn = function(piece) {
+    var self = this;
+    // send ajax request to move
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', this.url + '/promote_pawn?square='+this.last_moved_square+'&piece='+piece, true);
+    xhr.onreadystatechange = function() {
+        if(xhr.readyState === XMLHttpRequest.DONE) {
+            if(xhr.status === 200) {
+                var resp = JSON.parse(xhr.response);
+                if(resp.promoted != false) {
+                    $(self.popup).hide();
+                    $(self.popup).find('.'+self.current_turn+'_pawn_promotion').hide();
+                    this.removeHighlight(src_x, src_y, 'selected_tile');
+                    this.setHighlight(dest_x, dest_y, 'last_moved_tile');
+                    this.selected_tile = null;
+                    self.drawPieces(resp.board);
+                }
+            }
+        }
+    }
+    xhr.send();
+}
 
 /*
     Retrieve Board

@@ -1,0 +1,23 @@
+rchitecture Notes
+    Separate move bitboards and fully valid moves.
+    Move bitboards should only check that the target square is valid, i.e
+    within reach and not occupied by the same piece. It should not do any checks
+    like whether it results in check etc. Functions returning fully valid moves
+    should use the move bitboards and then process their own checks. These
+    functions should not return bitboards but arrays/vectors of a custom type
+    Move object.
+
+
+
+Logic Notes: 
+    To get the LSB for uints do (~x + 1) & x.
+    Let x = 0100 1000
+       ~x = 1011 0111
+       +1 = 1011 1000
+    By adding 1 the final three 1s will carry over and be removed.
+    If the final digit in x was a 1 then:
+        x = 0100 1001
+       ~x = 1011 0110
+       +1 = 1011 0111
+    The plus 1 will always set the final bit in (~x)to be same
+    as in x.

@@ -10,11 +10,9 @@ class Board {
 public:
 
     // ------- Variables -------
-    Bitboard boards[12];
-
+    Bitboard bitboards[12];
+    Bitboard castling_rights;
     Colour current_turn;
-    unsigned int w_castle_rights;
-    unsigned int b_castle_rights;
 
     // ------- Constructors --------
     Board();
@@ -32,13 +30,24 @@ public:
 
 
     // ---- Functions --------
+    void update_turn();
+    
     Piece get_piece_at(Square s) const;
+    Bitboard get_board_for(Piece p) const;
+    void set_board_for(Piece p, Bitboard b);
+
 
     Bitboard all_white_bb() const;
     Bitboard all_black_bb() const;
 
 
-    bool make_move(Square orig, Square dest, MoveType type);
+    void move_piece(Move move);
+    void castle(CastlingRights cr);
+    void promote_pawn(Square s, Piece piece);
+    
+    
+    void set_castling_flags(Move m);
+    Colour infer_player_colour(Square orig) const;
 
     void build_from_fen(std::string fen);
 

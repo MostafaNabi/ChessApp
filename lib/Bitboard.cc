@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <algorithm>
+#include <bitset>
 #include "Bitboard.h"
 
 constexpr uint64_t Bitboard::Rank[];
@@ -44,7 +45,7 @@ Bitboard& Bitboard::operator=(Bitboard&& other) {
 
 // ---------- Functions -------------
 
-uint64_t Bitboard::bitboard() {
+uint64_t Bitboard::bitboard() const {
     return this->bb;
 }
 
@@ -185,7 +186,7 @@ void Bitboard::operator>>= (uint s) {
 }
 
 // ------------- Square Operators ---------------
-Bitboard Bitboard::operator& (const Square s) const {
+Bitboard Bitboard::operator& (Square s) const {
     uint64_t i = 1;
     uint64_t sb = i << (int)s;
     return Bitboard(this->bb & sb);
@@ -197,29 +198,69 @@ void Bitboard::operator&= (const Square s) {
     this->bb &= sb;
 }
 
-Bitboard Bitboard::operator| (const Square s) const {
+Bitboard Bitboard::operator| (Square s) const {
     uint64_t i = 1;
     uint64_t sb = i << (int)s;
     return Bitboard(this->bb | sb);
 }
 
-void Bitboard::operator|= (const Square s) {
+void Bitboard::operator|= (Square s) {
     uint64_t i = 1;
     uint64_t sb = i << (int)s;
     this->bb |= sb;
 }
 
-Bitboard Bitboard::operator^ (const Square s) const {
+Bitboard Bitboard::operator^ (Square s) const {
     uint64_t i = 1;
     uint64_t sb = i << (int)s;
     return Bitboard(this->bb ^ sb);
 }
 
-void Bitboard::operator^= (const Square s) {
+void Bitboard::operator^= (Square s) {
     uint64_t i = 1;
     uint64_t sb = i << (int)s;
     this->bb ^= sb;
 }
+
+
+// ------------- CastlingRights ---------------
+Bitboard Bitboard::operator& (CastlingRights cr) const {
+    uint64_t i = 1;
+    uint64_t sb = i << (int)cr;
+    return Bitboard(this->bb & sb);
+}
+
+void Bitboard::operator&= (const CastlingRights cr ) {
+    uint64_t i = 1;
+    uint64_t sb = i << (int)cr;
+    this->bb &= sb;
+}
+
+Bitboard Bitboard::operator| (CastlingRights cr) const {
+    uint64_t i = 1;
+    uint64_t sb = i << (int)cr;
+    return Bitboard(this->bb | sb);
+}
+
+void Bitboard::operator|= (CastlingRights cr) {
+    uint64_t i = 1;
+    uint64_t sb = i << (int)cr;
+    this->bb |= sb;
+}
+
+Bitboard Bitboard::operator^ (CastlingRights cr) const {
+    uint64_t i = 1;
+    uint64_t sb = i << (int)cr;
+    return Bitboard(this->bb ^ sb);
+}
+
+void Bitboard::operator^= (CastlingRights cr) {
+    uint64_t i = 1;
+    uint64_t sb = i << (int)cr;
+    this->bb ^= sb;
+}
+
+
 
 void Bitboard::pretty_print() {
     std::cout << std::bitset<8>((this->bb & this->Bitboard::Rank[7]) >> 56) << std::endl;
