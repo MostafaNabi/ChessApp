@@ -1,6 +1,7 @@
 // Onclick functions for the navbar
 
 function BoardView(game_type, container_id) {
+    this.game_type  = game_type;
     this.url = '/'+game_type;
     this.container_id = container_id;
     this.selected_tile = null; // {div, x, y}
@@ -42,17 +43,19 @@ BoardView.prototype.init = function() {
     this.popup.style.display = 'none';
     this.popup.id = 'user_input_popup';
     this.popup.className = 'popup';
+    var oc =  (this.game_type == 'singleplayer') ? 'SinglePlayerBoardView' : 'TwoPlayerBoardView';
+    if(this.game_type)
     this.popup.innerHTML =  "<div class='white_pawn_promotion'>" +
-                                "<div class='chess_piece_white_queen' onclick='self.promote_pawn(1)'></div>" +
-                                "<div class='chess_piece_white_bishop' onclick='self.promote_pawn(2)'></div>" +
-                                "<div class='chess_piece_white_knight' onclick='self.promote_pawn(3)'></div>" +
-                                "<div class='chess_piece_white_rook' onclick='self.promote_pawn(4)'></div>" +
+                                "<div class='chess_piece_white_queen' onclick='"+oc+".promote_pawn(1)'></div>" +
+                                "<div class='chess_piece_white_bishop' onclick='"+oc+".promote_pawn(2)'></div>" +
+                                "<div class='chess_piece_white_knight' onclick='"+oc+".promote_pawn(3)'></div>" +
+                                "<div class='chess_piece_white_rook' onclick='"+oc+".promote_pawn(4)'></div>" +
                             "</div>" +
                             "<div class='black_pawn_promotion'>" +
-                                "<div class='chess_piece_black_queen' onclick='self.promote_pawn(7)'></div>" +
-                                "<div class='chess_piece_black_bishop' onclick='self.promote_pawn(8)'></div>" +
-                                "<div class='chess_piece_black_knight' onclick='self.promote_pawn(9)'></div>" +
-                                "<div class='chess_piece_black_rook' onclick='self.promote_pawn(10)'></div>" +
+                                "<div class='chess_piece_black_queen' onclick='"+oc+".promote_pawn(7)'></div>" +
+                                "<div class='chess_piece_black_bishop' onclick='"+oc+".promote_pawn(8)'></div>" +
+                                "<div class='chess_piece_black_knight' onclick='"+oc+".promote_pawn(9)'></div>" +
+                                "<div class='chess_piece_black_rook' onclick='"+oc+".promote_pawn(10)'></div>" +
                             "</div>";
     $(this.popup).find('.white_pawn_promotion').hide();
     $(this.popup).find('.black_pawn_promotion').hide();
@@ -243,6 +246,9 @@ BoardView.prototype.parse_response= function(move, resp) {
         $('#'+this.container_id + ' .message')[0].innerHTML = 'Pawn Promotion!';
         $(this.popup).show();
         $(this.popup).find('.'+this.current_turn+'_pawn_promotion').show();
+        this.removeHighlight(src_x, src_y, 'selected_tile');
+        this.setHighlight(dest_x, dest_y, 'last_moved_tile');
+        this.selected_tile = null;
     }
 
     // check
@@ -279,9 +285,7 @@ BoardView.prototype.promote_pawn = function(piece) {
                 if(resp.promoted != false) {
                     $(self.popup).hide();
                     $(self.popup).find('.'+self.current_turn+'_pawn_promotion').hide();
-                    this.removeHighlight(src_x, src_y, 'selected_tile');
-                    this.setHighlight(dest_x, dest_y, 'last_moved_tile');
-                    this.selected_tile = null;
+                    self.changeTurn();
                     self.drawPieces(resp.board);
                 }
             }

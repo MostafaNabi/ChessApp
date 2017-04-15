@@ -38,11 +38,11 @@ app.get('/singleplayer/make_move', function (req, res) {
 });
 
 app.get('/singleplayer/promote_pawn', function (req, res) {
-    var piece = res.query.piece;
-    var square = res.query.square;
-    console.log("pawn promotion: square="+square + ", piece=" + piece);
+    var piece = parseInt(req.query.piece);
+    var square = parseInt(req.query.square);
     var resp = {};
     result = single_wi.promote_pawn(square, piece);
+    console.log("pawn promotion: square="+square + ", piece=" + piece + ", result="+result);
     if(result) {
         var resp = JSON.parse(single_wi.retrieve_board());
         resp.promoted = true;
