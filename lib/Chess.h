@@ -2,7 +2,7 @@
 #define CHESS_H
 #include <string>
 #include <vector>
-#include "Moves.h"
+#include "Evaluation.h"
 
 
 class Chess {
@@ -11,6 +11,7 @@ public:
     // ------- Variables --------
     Board board;
     GameType game_type;
+    int depth = Evaluation::DEPTH;
 
 
     // ------- Constructors --------
@@ -31,6 +32,7 @@ public:
 
     // Set AI difficulty between 1 - 10, can only be done on singleplayer games
     void set_ai_difficulty(int ai);
+    Result request_move();
     Result make_move(Square orig, Square dest);
     bool promote_pawn(Square s, Piece p);
 

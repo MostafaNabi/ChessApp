@@ -31,6 +31,7 @@ public:
 
     // ---- Functions --------
     void update_turn();
+    Colour get_current_turn() const;
     
     Piece get_piece_at(Square s) const;
     Bitboard get_board_for(Piece p) const;
@@ -41,6 +42,7 @@ public:
     Bitboard all_black_bb() const;
 
 
+    void make_move(Move move);
     void move_piece(Move move);
     void castle(CastlingRights cr);
     void promote_pawn(Square s, Piece piece);

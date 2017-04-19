@@ -27,6 +27,32 @@ Bitboard::~Bitboard() {
 
 }
 
+
+
+unsigned int Bitboard::bit_count() const {
+    unsigned int c = 0;
+    Bitboard b = this->bb;
+    while(b > 0) {
+        if(b & 1) {
+            c++;
+        }
+        b >>= 1;
+    }
+    return c;
+}
+
+std::vector<Square> Bitboard::all_bit_indexes() const {
+    std::vector<Square> list;
+    Bitboard b = this->bb;
+    while(b != 0) {
+        unsigned int index = lsb_index(b);
+        Square s = (Square) (index - 1);
+        list.push_back(s);
+        b ^= s;
+    }
+    return list;
+}
+
 // ------------- Copy and Move Operators ---------------
 Bitboard& Bitboard::operator=(const Bitboard& other) {
     if(&other != this) {

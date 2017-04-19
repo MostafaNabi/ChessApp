@@ -1,3 +1,6 @@
 TODO:
-    1. Create popup for pawn promotion
-    2. Find out why self.promote_pawn doesnt work
+    1. Make sure Move() is initialised with correct movetype whenever possible
+    3. Implement negamax
+    7. Move object should contain movetype as an option, otherwise the AI will not be able
+       to differentiate between normal moves and castling/promotions.
+  

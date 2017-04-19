@@ -21,6 +21,7 @@ class WebInterface : public node::ObjectWrap {
 
         static void build_from_fen(const v8::FunctionCallbackInfo<v8::Value>& args);
         static void set_ai_difficulty(const v8::FunctionCallbackInfo<v8::Value>& args);
+        static void request_move(const v8::FunctionCallbackInfo<v8::Value>& args);
         static void make_move(const v8::FunctionCallbackInfo<v8::Value>& args);
         static void promote_pawn(const v8::FunctionCallbackInfo<v8::Value>& args);
         static void retrieve_board(const v8::FunctionCallbackInfo<v8::Value>& args);

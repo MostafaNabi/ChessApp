@@ -10,9 +10,9 @@ enum GameType {
 
 
 enum Colour {
-    BLACK = 0,
+    BLACK = -1,
     WHITE = 1,
-    COLOUR_NONE = 2
+    COLOUR_NONE = 0
 };
 
 enum Result {
@@ -74,11 +74,27 @@ namespace Types {
 struct Move {
     Square origin;
     Square destination;
+    MoveType move_type;
+    
+    Move() {
+        this->origin = SQ_0;
+        this->destination = SQ_0;
+        this->move_type = NORMAL;
+    }
     
     Move(Square orig, Square dest) {
         this->origin = orig;
         this->destination = dest;
+        this->move_type = NORMAL;
     }
+    
+    Move(Square orig, Square dest, MoveType m) {
+        this->origin = orig;
+        this->destination = dest;
+        this->move_type = m;
+    }
+    
+    
 };
 
 #endif

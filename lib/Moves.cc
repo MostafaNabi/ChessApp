@@ -9,9 +9,9 @@ namespace Moves {
 // ----------------------------------------------------------------------------
     
     bool is_valid_move(Move move, const Board& board) {
-        if(board.infer_player_colour(move.origin) != board.current_turn) {
-            return false;
-        }
+         /* if(board.infer_player_colour(move.origin) != c) {
+              return false;
+          }*/
         
         MoveType move_type = infer_move_type(move, board);
         switch(move_type) {
@@ -81,10 +81,9 @@ namespace Moves {
 
     
     bool results_in_check(Move move, const Board& board) {
-        Colour c = board.infer_player_colour(move.origin);
         Board temp = board;
         temp.move_piece(move);
-        return is_in_check(c, temp);
+        return is_in_check(board.get_current_turn(), temp);
     }
     
     bool any_results_in_check(std::vector<Move> moves, const Board& board) {
@@ -189,7 +188,7 @@ namespace Moves {
     }
     
     bool is_castling(Move move, const Board& board) {
-        Colour c = board.infer_player_colour(move.origin);
+        Colour c = board.get_current_turn();
         Piece p = board.get_piece_at(move.origin);
         
         if(c == WHITE && p == WHITE_KING) {
@@ -236,9 +235,40 @@ namespace Moves {
         } else {
             for(Piece p :Types::ALL_BLACK_PIECES) {
                 std::vector<Move> list = all_move_list_for(p, board);
-                move_list.insert(move_list.end(), list.begin(), list.end());            }
+                move_list.insert(move_list.end(), list.begin(), list.end());
+            }
         }
+        
+        std::vector<Move> castle_moves = all_castling_options(c, board);
+        move_list.insert(move_list.end(), castle_moves.begin(), castle_moves.end());
         return move_list;
+    }
+    
+    
+    std::vector<Move> all_castling_options(Colour c, const Board& board) {
+        std::vector<Move> list;
+        if(c == WHITE) {
+            if(can_castle(WHITE_KINGSIDE_CR, board)) {
+                Move m = Move( (Square)WHITE_KING_CR, (Square)WHITE_KINGSIDE_CR, CASTLE);
+                list.push_back(m);
+            }
+            
+            if(can_castle(WHITE_QUEENSIDE_CR, board)) {
+                Move m = Move( (Square)WHITE_KING_CR, (Square)WHITE_QUEENSIDE_CR, CASTLE);
+                list.push_back(m);
+            }
+        } else if(c == BLACK) {
+            if(can_castle(BLACK_KINGSIDE_CR, board)) {
+                Move m = Move( (Square)BLACK_KING_CR, (Square)BLACK_KINGSIDE_CR, CASTLE);
+                list.push_back(m);
+            }
+            
+            if(can_castle(BLACK_QUEENSIDE_CR, board)) {
+                Move m = Move( (Square)BLACK_KING_CR, (Square)BLACK_QUEENSIDE_CR, CASTLE);
+                list.push_back(m);
+            }
+        }
+        return list;
     }
     
     std::vector<Move> all_player_attack_list(Colour c, const Board& board) {
@@ -262,15 +292,18 @@ namespace Moves {
         std::vector<Move> move_list;
         Bitboard piece_bb =  board.get_board_for(p);
         
-        std::vector<Square> orig_list = Bitboard::all_bit_indexes(piece_bb);
+        std::vector<Square> orig_list = piece_bb.all_bit_indexes();
         
         for(Square orig: orig_list) {
             Bitboard move_bb = get_move_bitboard(orig, board);
-            std::vector<Square> dest_list = Bitboard::all_bit_indexes(move_bb);
+            std::vector<Square> dest_list = move_bb.all_bit_indexes();
             
             for(Square dest : dest_list) {
                 Move m = Move(orig, dest);
-                move_list.push_back(m);
+                if(is_valid_move(m, board)) {
+                    m.move_type = infer_move_type(m, board);
+                    move_list.push_back(m);
+                }
             }
         }
         return move_list;
@@ -280,15 +313,18 @@ namespace Moves {
         std::vector<Move> atk_list;
         Bitboard piece_bb =  board.get_board_for(p);
         
-        std::vector<Square> orig_list = Bitboard::all_bit_indexes(piece_bb);
+        std::vector<Square> orig_list = piece_bb.all_bit_indexes();
         
         for(Square orig: orig_list) {
             Bitboard atk_bb = get_attack_bitboard(orig, board);
-            std::vector<Square> dest_list = Bitboard::all_bit_indexes(atk_bb);
+            std::vector<Square> dest_list = atk_bb.all_bit_indexes();
             
             for(Square dest : dest_list) {
                 Move m = Move(orig, dest);
-                atk_list.push_back(m);
+                if(is_valid_move(m, board)) {
+                    m.move_type = infer_move_type(m, board);
+                    atk_list.push_back(m);
+                }
             }
         }
         return atk_list;
@@ -326,7 +362,7 @@ namespace Moves {
         Bitboard piece_bb =  board.get_board_for(p);
         Bitboard move_bb;
         
-        std::vector<Square> positions = Bitboard::all_bit_indexes(piece_bb);
+        std::vector<Square> positions = piece_bb.all_bit_indexes();
         for (Square s : positions) {
             move_bb |= get_move_bitboard(s, board);
         }
@@ -337,7 +373,7 @@ namespace Moves {
     Bitboard all_attack_bb_for(Piece p, const Board& board) {
         Bitboard piece_bb =  board.get_board_for(p);
         Bitboard atk_bb;
-        std::vector<Square> positions = Bitboard::all_bit_indexes(piece_bb);
+        std::vector<Square> positions = piece_bb.all_bit_indexes();
         for (Square s : positions) {
             atk_bb |= get_attack_bitboard(s, board);
         }
@@ -379,7 +415,7 @@ namespace Moves {
     // Returns a move bitboard with pseudo-legal moves (No validation for checks)
     Bitboard king_move_bb(Square s, const Board& board) {
         Bitboard move_bb = king_attack_bb(s, board);
-        Colour c = board.infer_player_colour(s);
+        Colour c = board.get_current_turn();
         Bitboard same_bb = (c == WHITE) ? board.all_white_bb() : board.all_black_bb();
 
         // remove positons that would overlap with own pieces
@@ -405,7 +441,7 @@ namespace Moves {
 
     Bitboard queen_move_bb(Square s, const Board& board) {
         Bitboard move_bb = queen_attack_bb(s, board);
-        Colour c = board.infer_player_colour(s);
+        Colour c = board.get_current_turn();
         Bitboard same_bb = (c == WHITE) ? board.all_white_bb() : board.all_black_bb();
         return Bitboard(move_bb ^ (move_bb & same_bb));
     }
@@ -419,7 +455,7 @@ namespace Moves {
 
     Bitboard bishop_move_bb(Square s, const Board& board) {
         Bitboard move_bb = bishop_attack_bb(s, board);
-        Colour c = board.infer_player_colour(s);
+        Colour c = board.get_current_turn();
         Bitboard same_bb = (c == WHITE) ? board.all_white_bb() : board.all_black_bb();
         return Bitboard(move_bb ^ (move_bb & same_bb));
     }
@@ -436,7 +472,7 @@ namespace Moves {
 
     Bitboard knight_move_bb(Square s, const Board& board) {
         Bitboard move_bb = knight_attack_bb(s, board);
-        Colour c = board.infer_player_colour(s);
+        Colour c = board.get_current_turn();
         Bitboard same_bb = (c == WHITE) ? board.all_white_bb() : board.all_black_bb();
         return Bitboard(move_bb ^ (move_bb & same_bb));
     }
@@ -472,7 +508,7 @@ namespace Moves {
     }
 
     Bitboard rook_move_bb(Square s, const Board& board) {
-        Colour c = board.infer_player_colour(s);
+        Colour c = board.get_current_turn();
         Bitboard move_bb = rook_attack_bb(s, board);
         Bitboard same_bb = (c == WHITE) ? board.all_white_bb() : board.all_black_bb();
         return Bitboard(move_bb ^ (move_bb & same_bb));
@@ -493,7 +529,7 @@ namespace Moves {
         Bitboard move_bb;
         Bitboard same_bb;
         Bitboard opp_bb;
-        Colour c = board.infer_player_colour(s);
+        Colour c = board.get_current_turn();
         if(c == WHITE ) {same_bb = board.all_white_bb(); opp_bb = board.all_black_bb();}
         else {same_bb = board.all_black_bb(); opp_bb = board.all_white_bb();}
         Bitboard all_bb = same_bb | opp_bb;
@@ -527,7 +563,7 @@ namespace Moves {
     
     Bitboard pawn_attack_bb(Square s, const Board& board) {
         Bitboard atk_bb;
-        Colour c = board.infer_player_colour(s);
+        Colour c = board.get_current_turn();
 
         if(c == WHITE) {
             if(!(Bitboard::rank(7) & s)) {

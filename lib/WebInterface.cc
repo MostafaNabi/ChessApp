@@ -49,6 +49,7 @@ void WebInterface::Init(Local<Object> exports) {
   // Prototype
   NODE_SET_PROTOTYPE_METHOD(tpl, "build_from_fen", build_from_fen);
   NODE_SET_PROTOTYPE_METHOD(tpl, "set_ai_difficulty", set_ai_difficulty);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "request_move", request_move);
   NODE_SET_PROTOTYPE_METHOD(tpl, "make_move", make_move);
   NODE_SET_PROTOTYPE_METHOD(tpl, "promote_pawn", promote_pawn);
   NODE_SET_PROTOTYPE_METHOD(tpl, "retrieve_board", retrieve_board);
@@ -162,14 +163,14 @@ void  WebInterface::promote_pawn(const v8::FunctionCallbackInfo<v8::Value>& args
     if (args.Length() < 2) {
         // Throw an Error that is passed back to JavaScript
         isolate->ThrowException(Exception::TypeError(
-            String::NewFromUtf8(isolate, "Wrong number of arguments, make_move takes 2 arguments")));
+            String::NewFromUtf8(isolate, "Wrong number of arguments, promote_pawn takes 2 arguments")));
         args.GetReturnValue().Set( Boolean::New(isolate, false));
         return;
     }
 
     if (!args[0]->IsNumber() || !args[1]->IsNumber()) {
         isolate->ThrowException(Exception::TypeError(
-            String::NewFromUtf8(isolate, "Wrong argument types, make_move expects 2 integers")));
+            String::NewFromUtf8(isolate, "Wrong argument types, promote_pawn expects 2 integers")));
         args.GetReturnValue().Set( Boolean::New(isolate, false));
         return;
     }
@@ -180,6 +181,21 @@ void  WebInterface::promote_pawn(const v8::FunctionCallbackInfo<v8::Value>& args
     bool result = obj->chessapp->promote_pawn(orig, p);
     args.GetReturnValue().Set( Boolean::New(isolate, result));
 }
+void  WebInterface::request_move(const v8::FunctionCallbackInfo<v8::Value>& args) {
+    Isolate* isolate = args.GetIsolate();
+
+    if (args.Length() > 0) {
+        // Throw an Error that is passed back to JavaScript
+        isolate->ThrowException(Exception::TypeError(
+            String::NewFromUtf8(isolate, "Wrong number of arguments, request move takes no arguments")));
+        args.GetReturnValue().Set( Boolean::New(isolate, false));
+        return;
+    }
+    WebInterface* obj = ObjectWrap::Unwrap<WebInterface>(args.Holder());
+    int result = obj->chessapp->request_move();
+    args.GetReturnValue().Set( Integer::New(isolate, result));
+}
+
 
 void WebInterface::retrieve_board(const FunctionCallbackInfo<Value>& args) {
     Isolate* isolate = args.GetIsolate();

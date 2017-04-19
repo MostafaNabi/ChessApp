@@ -1,0 +1,119 @@
+//
+//  Evaluation.cpp
+//  ChessXcode
+//
+//  Created by Mostafa Nabi on 17/04/2017.
+//  Copyright © 2017 Mostafa Nabi. All rights reserved.
+//
+
+#include "Evaluation.h"
+
+
+namespace Evaluation {
+    
+    
+    double evaluate_board(const Board& board) {
+        // call material evaluation
+        
+        double val = material_evaluation(board) + mobility_evaluation(board);
+        val *= board.get_current_turn();
+        Colour opp_c = (board.get_current_turn() == WHITE) ? BLACK : WHITE;
+        if(Moves::is_in_checkmate(opp_c, board)) {
+            return INT_MAX;
+        }
+        return val;
+    }
+    
+    double material_evaluation(const Board& board) {
+        unsigned int num_wk = (board.get_board_for(WHITE_KING) > 0) ? 1 : 0;
+        unsigned int num_wq = board.get_board_for(WHITE_QUEEN).bit_count();
+        unsigned int num_wb = board.get_board_for(WHITE_BISHOP).bit_count();
+        unsigned int num_wn = board.get_board_for(WHITE_KNIGHT).bit_count();
+        unsigned int num_wr = board.get_board_for(WHITE_ROOK).bit_count();
+        unsigned int num_wp = board.get_board_for(WHITE_PAWN).bit_count();
+        
+        unsigned int num_bk = (board.get_board_for(BLACK_KING) > 0) ? 1 : 0;
+        unsigned int num_bq = board.get_board_for(BLACK_QUEEN).bit_count();
+        unsigned int num_bb = board.get_board_for(BLACK_BISHOP).bit_count();
+        unsigned int num_bn = board.get_board_for(BLACK_KNIGHT).bit_count();
+        unsigned int num_br = board.get_board_for(BLACK_ROOK).bit_count();
+        unsigned int num_bp = board.get_board_for(BLACK_PAWN).bit_count();
+        
+        double king_eval = Evaluation::king_value(board) * (num_wk - num_bk);
+        double queen_eval = Evaluation::queen_value(board) * (num_wq - num_bq);
+        double bishop_eval = Evaluation::bishop_value(board) * (num_wb - num_bb);
+        double knight_eval = Evaluation::knight_value(board) * (num_wn - num_bn);
+        double rook_eval = Evaluation::rook_value(board) * (num_wr - num_br);
+        double pawn_eval = Evaluation::pawn_value(board) * (num_wp - num_bp);
+        
+        double mat_eval = king_eval + queen_eval + bishop_eval + knight_eval + rook_eval + pawn_eval;
+        return mat_eval;
+    }
+    
+    double mobility_evaluation(const Board& board) {
+        // blocked/doubled pawns
+        // number of available moves
+        // number of pieces in center stage
+        
+        double num_moves = Moves::all_player_move_list(board.get_current_turn(), board).size();
+        return num_moves;
+    }
+    
+    
+    
+    int king_value(const Board& b) {
+        return Evaluation::KING_VALUE;
+    }
+    
+    int queen_value(const Board& b) {
+        return Evaluation::QUEEN_VALUE;;
+    }
+    
+    int bishop_value(const Board& b) {
+        return Evaluation::BISHOP_VALUE;;
+    }
+    
+    int knight_value(const Board& b) {
+        return Evaluation::KNIGHT_VALUE;;
+    }
+    
+    int rook_value(const Board& b) {
+        return Evaluation::ROOK_VALUE;;
+    }
+    
+    int pawn_value(const Board& b) {
+        int val = Evaluation::PAWN_VALUE;
+      /*  if(b.get_current_turn() == WHITE) {
+            val += Evaluation::WHITE_PAWN_OPENING_TABLE[(unsigned int)s];
+        } else {
+            val += Evaluation::BLACK_PAWN_OPENING_TABLE[(unsigned int)s];
+        }*/
+        return val;
+    }
+    
+    double negamax(const Board& b, int depth) {
+        // base case and checkmate
+        Colour opp_c = (b.get_current_turn() == WHITE) ? BLACK : WHITE;
+        if(Moves::is_in_checkmate(opp_c,b) || depth == 0) {
+            return (-1 * evaluate_board(b));
+        }
+            
+        // get all moves
+        Move best_move;
+        double best_eval = INT_MIN;
+        
+        std::vector<Move> all_moves = Moves::all_player_move_list(b.get_current_turn(), b);
+        for(Move m : all_moves) {
+            Board temp = b;
+            temp.make_move(m);
+            double eval = -1 * negamax(temp, depth - 1);
+            if(eval > best_eval) {
+                best_eval = eval;
+                best_move = m;
+            }
+        }
+        return best_eval;
+    }
+
+
+}

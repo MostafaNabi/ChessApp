@@ -1,98 +1,90 @@
-var express = require('express')
-var app = express()
+const express = require('express');
+const http = require('http');
+const url = require('url');
+const WebSocket = require('ws');
 
-// test.js
+const app = express();
+
+
+// Addon for creating web interfaces
 const ChessAddon = require('./build/Release/ChessAddon.node');
-
-var single_wi = new ChessAddon.WebInterface(1, 3);
-var two_wi = new ChessAddon.WebInterface(2);
+var id_counter = 0;
 
 // Defining middleware to serve static file
-app.use(express.static('public'));
+app.use(express.static(__dirname+'/public'));
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/views/index.html');
 });
 
+const server = http.createServer(app);
+const wss = new WebSocket.Server({server: server});
+wss.on('connection', function connection(ws) {
+    var id = id_counter;
+    id_counter++;
+    console.log('Socket[' + id + '] connected.');
 
-app.get('/singleplayer/retrieve_board', function (req, res) {
-    res.send(single_wi.retrieve_board());
-});
-
-app.get('/singleplayer/build_from_fen', function (req, res) {
-});
-
-app.get('/singleplayer/make_move', function (req, res) {
-    var orig_square = parseInt(req.query.orig);
-    var dest_square = parseInt(req.query.dest);
-    var result = single_wi.make_move(orig_square, dest_square);
-    var str = 'cout << "Moved ' + orig_square + ', ' + dest_square + '" << ';
-    str += 'chess.make_move(SQ_' + orig_square + ', SQ_' + dest_square + ') << endl;';
-    console.log(str);    if(result != 0) {
-        var resp = JSON.parse(single_wi.retrieve_board());
-        resp.result = result;
-        res.json(resp);
+    var loc = url.parse(ws.upgradeReq.url, true);
+    var gt = parseInt(loc.query.game_type);
+    var wi;
+    if(gt == 1) {
+        wi = new ChessAddon.WebInterface(gt, 2);
     } else {
-        res.json({result: 0});
+        wi = new ChessAddon.WebInterface(gt);
     }
-});
-
-app.get('/singleplayer/promote_pawn', function (req, res) {
-    var piece = parseInt(req.query.piece);
-    var square = parseInt(req.query.square);
-    var resp = {};
-    result = single_wi.promote_pawn(square, piece);
-    console.log("pawn promotion: square="+square + ", piece=" + piece + ", result="+result);
-    if(result) {
-        var resp = JSON.parse(single_wi.retrieve_board());
-        resp.promoted = true;
-        res.json(resp);
-    } else {
-        res.json({promoted : false})
-    }
-});
-
-
-app.get('/twoplayer/retrieve_board', function (req, res) {
-    res.send(two_wi.retrieve_board());
-});
-
-
-app.get('/twoplayer:build_from_fen', function (req, res) {
-});
-
-app.get('/twoplayer/make_move', function (req, res) {
-    var orig_square = parseInt(req.query.orig);
-    var dest_square = parseInt(req.query.dest);
-    var result = two_wi.make_move(orig_square, dest_square);
     
-    var str = "cout << Moved " + orig_square + ", " + dest_square + " << ";
-    str += "chess.make_move(" + orig_square + ", " + dest_square + ") << endl;";
-    console.log(str);
-    if(result != 0) {
-        var resp = JSON.parse(two_wi.retrieve_board());
-        resp.result = result;
-        res.json(resp);
-    } else {
-        res.json({result: 0});
-    }
+    ws.on('open', function() {
+        console.log('Socket[' + id + '] open.');
+    });
+    
+    ws.on('message', function(data) {
+        var req = JSON.parse(data);
+        switch(req.event) {
+            case 'make_move': {
+                var result = wi.make_move(req.orig, req.dest);
+                var resp = {
+                            event: 'make_move_result',
+                            result: result,
+                            prev_orig: req.orig, 
+                            prev_dest: req.dest
+                        }
+                ws.send(JSON.stringify(resp));
+                break;
+            }
+
+            case 'request_move': {
+                var result = wi.request_move();
+                ws.send('{"event":"request_move_result", "value":' + result + '}');
+                break;
+            }
+
+            case 'request_board': {
+                var resp = {'event':'request_board_result'};
+                resp.result = JSON.parse(wi.retrieve_board()).board;
+                ws.send(JSON.stringify(resp));
+                break;
+            }
+
+            case 'promote_pawn': {
+                var p = req.piece;
+                var orig = req.orig;
+                var result = wi.promote_pawn(orig, p);
+                var resp = {
+                    event: 'promote_pawn_result',
+                    result: result
+                }
+                ws.send(JSON.stringify(resp));
+                break;
+            }
+        }
+    });
+
+    ws.on('close', function() {
+        console.log('Socket[' + id + '] closed.');
+        ws.close();
+    });
 });
 
-app.get('/twoplayer/promote_pawn', function (req, res) {
-    var piece = res.query.piece;
-    var square = res.query.square;
-    console.log("pawn promotion: square="+square + ", piece=" + piece);
-    var resp = {};
-    result = two_wi.promote_pawn(square, piece);
-    if(result) {
-        var resp = JSON.parse(two_wi.retrieve_board());
-        resp.promoted = true;
-        res.json(resp);
-    } else {
-        res.json({promoted : false})
-    }
-});
-
-app.listen(8080, function () {
-  console.log('Example app listening on port 8080!')
+server.listen(8080, function listening() {
+  console.log('Listening on 8080');
 });

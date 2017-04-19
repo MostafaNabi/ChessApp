@@ -99,6 +99,7 @@ OBJS := \
 	$(obj).target/$(TARGET)/lib/Bitboard.o \
 	$(obj).target/$(TARGET)/lib/Board.o \
 	$(obj).target/$(TARGET)/lib/Moves.o \
+	$(obj).target/$(TARGET)/lib/Evaluation.o \
 	$(obj).target/$(TARGET)/lib/Chess.o \
 	$(obj).target/$(TARGET)/lib/WebInterface.o \
 	$(obj).target/$(TARGET)/lib/ChessAddon.o

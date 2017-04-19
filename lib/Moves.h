@@ -56,6 +56,7 @@ namespace Moves {
 
     
     std::vector<Move> all_player_move_list(Colour c, const Board& board);
+    std::vector<Move> all_castling_options(Colour c, const Board& board);
     std::vector<Move> all_move_list_for(Piece p, const Board& board);
     
     Bitboard all_player_move_bb(Colour c, const Board& board);

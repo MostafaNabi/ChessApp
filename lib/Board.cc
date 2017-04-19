@@ -78,6 +78,11 @@ void Board::update_turn() {
     this->current_turn = (this->current_turn == WHITE) ? BLACK : WHITE;
 }
 
+Colour Board::get_current_turn() const {
+    return this->current_turn;
+}
+
+
 Piece Board::get_piece_at(Square s) const {
     for(int j=0; j<12; j++) {
         if( (this->bitboards[j] & s) > 0) {
@@ -113,6 +118,24 @@ Bitboard Board::all_black_bb() const {
     return bb;
 }
 
+
+
+void Board::make_move(Move move) {
+    switch(move.move_type) {
+        case NORMAL: this->move_piece(move); break;
+        case CASTLE: this->castle((CastlingRights)move.destination); break;
+        case PAWN_PROMOTION: {
+            if(this->get_current_turn() == WHITE) {
+                this->promote_pawn(move.destination, WHITE_QUEEN);
+            } else {
+                this->promote_pawn(move.destination, BLACK_QUEEN);
+            }
+            break;
+        }
+        default: this->move_piece(move); break;
+    }
+    this->update_turn();
+}
 
 void Board::move_piece(Move move) {
     this->set_castling_flags(move);

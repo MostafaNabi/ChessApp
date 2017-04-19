@@ -2,12 +2,14 @@
 
 function BoardView(game_type, container_id) {
     this.game_type  = game_type;
-    this.url = '/'+game_type;
     this.container_id = container_id;
-    this.selected_tile = null; // {div, x, y}
+    this.popup = document.createElement('div');
+
+    this.selected_square = null;
     this.last_moved_square = null;
-    this.pawn_promotion = null;
     this.current_turn = 'white';
+
+    this.websocket = new WebSocket('ws:'+window.location.host+'?game_type='+game_type);
 
     this.piece_map = {
         0:'chess_piece_white_king',
@@ -26,8 +28,10 @@ function BoardView(game_type, container_id) {
         12:'chess_piece_none'
     }
 
-    this.popup = document.createElement('div');
-    this.init();
+    var self = this;
+    this.websocket.onopen = function() {
+        self.init();
+    }
 }
 
 BoardView.prototype.changeTurn = function() {
@@ -39,7 +43,42 @@ BoardView.prototype.changeTurn = function() {
 }
 
 BoardView.prototype.init = function() {
+    this.setupWebsocket();
+    this.setupBoard();
+    this.setupPopup();
+}
+
+
+BoardView.prototype.setupWebsocket = function() {
     var self = this;
+    self.websocket.addEventListener('message', function(event) {
+        var resp = JSON.parse(event.data);
+        switch(resp.event) {
+            case 'make_move_result': {
+                self.make_move_result(resp);
+                break;
+            }
+
+            case 'request_move_result': {
+                self.changeTurn();
+                self.request_board();
+                break;
+            }
+
+            case 'request_board_result': {
+                self.request_board_result(resp);
+                break;
+            }
+            
+            case 'promote_pawn_result': {
+                self.promote_pawn_result(resp);
+                break;
+            }
+        }
+    });
+}
+
+BoardView.prototype.setupPopup = function() {
     this.popup.style.display = 'none';
     this.popup.id = 'user_input_popup';
     this.popup.className = 'popup';
@@ -60,8 +99,6 @@ BoardView.prototype.init = function() {
     $(this.popup).find('.white_pawn_promotion').hide();
     $(this.popup).find('.black_pawn_promotion').hide();
     document.getElementById(this.container_id).appendChild(this.popup);
-
-    this.setupBoard();
 }
 
 BoardView.prototype.setupBoard = function(fen) {
@@ -87,7 +124,7 @@ BoardView.prototype.setupBoard = function(fen) {
             })(tile,x,y);
         }
     }
-    this.drawBoard();
+    this.request_board();
 }
 
 /*
@@ -107,23 +144,24 @@ BoardView.prototype.display = function() {
     $('#'+this.container_id).show();
 }
 
-/*
-    Get div from the given position
-*/
-BoardView.prototype.getTile = function(x,y) {
+
+BoardView.prototype.getTile = function(sq) {
+    var x = sq % 8;
+    var y = Math.floor(sq/8);
     var con = $('#'+this.container_id + ' .board_container')[0];
     var row = 7 - y;
     var col = x;
+   // console.log('getTile', row, col, con.children[row]);
     return con.children[row].children[col];
 }
 
-BoardView.prototype.setHighlight = function(x,y, highlight) {
-    var tile = this.getTile(x,y);
+BoardView.prototype.setHighlight = function(sq, highlight) {
+    var tile = this.getTile(sq);
     $(tile).addClass(highlight);
 }
 
-BoardView.prototype.removeHighlight = function(x,y, highlight) {
-    var tile = this.getTile(x,y);
+BoardView.prototype.removeHighlight = function(sq, highlight) {
+    var tile = this.getTile(sq);
     $(tile).removeClass(highlight);
 }
 
@@ -131,10 +169,11 @@ BoardView.prototype.removeAllHighlight = function(highlight) {
     $('#'+this.container_id + ' .board_row div').removeClass(highight);
 }
 
-BoardView.prototype.isWhite = function(tile) {
+BoardView.prototype.isWhite = function(sq) {
     var black = ['chess_piece_white_king','chess_piece_white_queen','chess_piece_white_bishop',
                 'chess_piece_white_knight','chess_piece_white_rook','chess_piece_white_pawn'];
 
+    var tile = this.getTile(sq);
     for(var i=0; i<black.length; i++) {
         if(tile.classList.contains(black[i])) {
             return true;
@@ -143,10 +182,11 @@ BoardView.prototype.isWhite = function(tile) {
     return false;
 }
 
-BoardView.prototype.isBlack = function(tile) {
+BoardView.prototype.isBlack = function(sq) {
     var black = ['chess_piece_black_king','chess_piece_black_queen','chess_piece_black_bishop',
                 'chess_piece_black_knight','chess_piece_black_rook','chess_piece_black_pawn'];
 
+    var tile = this.getTile(sq);
     for(var i=0; i<black.length; i++) {
         if(tile.classList.contains(black[i])) {
             return true;
@@ -165,80 +205,84 @@ BoardView.prototype.isSameColour = function(orig, dest) {
     return false;
 }
 
-BoardView.prototype.hasPiece = function(orig) {
-    return (this.isWhite(orig) || this.isBlack(orig));
+BoardView.prototype.hasPiece = function(sq) {
+    return (this.isWhite(sq) || this.isBlack(sq));
 }
 
 
 BoardView.prototype.selectTile = function(x, y) {
-    var self = this;
-    var dest = self.getTile(x,y);
+    var orig = this.selected_square;
+    var dest = (8*y) + x;
 
+    if(this.game_type == 1 && this.current_turn != 'white') {
+        return;
+    }
     // invalid selection
-    if(this.selected_tile == null && !this.hasPiece(dest)) {
+    if(orig == null && !this.hasPiece(dest)) {
         return;
     }
 
     // new selection
-    if(this.selected_tile == null && this.hasPiece(dest)) {
+    if(orig == null && this.hasPiece(dest)) {
         if(this.isWhite(dest) && this.current_turn != 'white') {
             return;
         } else if(this.isBlack(dest) && this.current_turn != 'black') {
             return;
         }
-        this.selected_tile = {'div':dest, 'x':x, 'y':y};
-        this.setHighlight(x,y, 'selected_tile');
+        this.selected_square = dest;
+        this.setHighlight(dest, 'selected_tile');
+        return;
     }
-
 
     // changing same colour
-    if(self.isSameColour(this.selected_tile.div, dest)) {
-        this.removeHighlight(this.selected_tile.x, this.selected_tile.y, 'selected_tile');
-        this.setHighlight(x, y, 'selected_tile');
-        this.selected_tile = {'div':dest, 'x':x, 'y':y};
+    if(this.isSameColour(orig, dest)) {
+        this.removeHighlight(orig, 'selected_tile');
+        this.setHighlight(dest, 'selected_tile');
+        this.selected_square = dest;
         return;
     }
-
-    // convert y,x co-ordinates into square number starting from 0
-    var orig_square = (8*this.selected_tile.y) + this.selected_tile.x;
-    var dest_square = (8*y) + x;
-    var move = {src_x: this.selected_tile.x, src_y: this.selected_tile.y,
-                dest_x: x, dest_y: y}
-    // send ajax request to move
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', this.url + '/make_move?orig='+orig_square+'&dest='+dest_square, true);
-    xhr.onreadystatechange = function() {
-        if(xhr.readyState === XMLHttpRequest.DONE) {
-            if(xhr.status === 200) {
-                var resp = JSON.parse(xhr.response);
-                self.parse_response(move, resp);
-            }
-        }
-    }
-    xhr.send();
+    this.make_move(orig, dest);
 };
 
-BoardView.prototype.parse_response= function(move, resp) {
-    // INVALID_MOVE
+
+BoardView.prototype.make_move = function(orig, dest) {
+    var req = {'event':'make_move', 'orig':orig, 'dest':dest}
+    this.websocket.send(JSON.stringify(req));
+}
+
+BoardView.prototype.promote_pawn = function(piece) {
+    var req = {'event':'promote_pawn', 'orig':this.last_moved_square, 'piece':piece}
+    this.websocket.send(JSON.stringify(req));
+}
+
+BoardView.prototype.request_move = function() {
+    var req = {'event':'request_move'}
+    this.websocket.send(JSON.stringify(req));
+}
+
+BoardView.prototype.request_board = function() {
+    var req = {'event':'request_board'}
+    this.websocket.send(JSON.stringify(req));
+}
+
+
+BoardView.prototype.make_move_result = function(resp) {
+        // INVALID_MOVE
     if(resp.result == 0) {
+        $('#'+this.container_id + ' .message')[0].innerHTML = 'Invalid Move!';
         return;
     }
-    var src_x = move.src_x;
-    var src_y = move.src_y;
 
-    var dest_x = move.dest_x;
-    var dest_y = move.dest_y;
+    var orig  = resp.prev_orig;
+    var dest  = resp.prev_dest;
+    this.last_moved_square = dest;
 
-    this.last_moved_square = (8*dest_y) + dest_x;
 
-    // normal move
-    if(resp.result == 1) {
-        $('#'+this.container_id + ' .message')[0].innerHTML = 'Normal Move!';
-        this.changeTurn();
-        this.removeHighlight(src_x, src_y, 'selected_tile');
-        this.setHighlight(dest_x, dest_y, 'last_moved_tile');
-        this.selected_tile = null;
-        this.drawPieces(resp.board);
+    //------------------ Special Results -------------------
+    // check mate
+    if(resp.result == 4) {
+        $('#'+this.container_id + ' .message')[0].innerHTML = 'CheckMate!';
+        return;
     }
 
     // pawn promotion
@@ -246,87 +290,70 @@ BoardView.prototype.parse_response= function(move, resp) {
         $('#'+this.container_id + ' .message')[0].innerHTML = 'Pawn Promotion!';
         $(this.popup).show();
         $(this.popup).find('.'+this.current_turn+'_pawn_promotion').show();
-        this.removeHighlight(src_x, src_y, 'selected_tile');
-        this.setHighlight(dest_x, dest_y, 'last_moved_tile');
-        this.selected_tile = null;
+        return;
     }
+
+
+    //------------------ Normal Results -------------------
+
+    // normal move
+    if(resp.result == 1) {
+        $('#'+this.container_id + ' .message')[0].innerHTML = 'Normal Move!';
+    }
+
+
 
     // check
     if(resp.result == 3) {
         $('#'+this.container_id + ' .message')[0].innerHTML = 'Check!';
-        this.changeTurn();
-        this.removeHighlight(src_x, src_y, 'selected_tile');
-        this.setHighlight(dest_x, dest_y, 'last_moved_tile');
-        this.selected_tile = null;
-        this.drawPieces(resp.board);
     }
 
 
-    // check mate
-    if(resp.result == 4) {
-        $('#'+this.container_id + ' .message')[0].innerHTML = 'CheckMate!';
-        this.removeHighlight(src_x, src_y, 'selected_tile');
-        this.setHighlight(dest_x, dest_y, 'last_moved_tile');
-        this.selected_tile = null;
-        this.drawPieces(resp.board);
+    this.changeTurn();
+    this.selected_square = null;
+
+    this.request_board();
+    if(this.game_type == 1) {
+        this.request_move();
     }
 }
 
-
-BoardView.prototype.promote_pawn = function(piece) {
-    var self = this;
-    // send ajax request to move
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', this.url + '/promote_pawn?square='+this.last_moved_square+'&piece='+piece, true);
-    xhr.onreadystatechange = function() {
-        if(xhr.readyState === XMLHttpRequest.DONE) {
-            if(xhr.status === 200) {
-                var resp = JSON.parse(xhr.response);
-                if(resp.promoted != false) {
-                    $(self.popup).hide();
-                    $(self.popup).find('.'+self.current_turn+'_pawn_promotion').hide();
-                    self.changeTurn();
-                    self.drawPieces(resp.board);
-                }
-            }
-        }
-    }
-    xhr.send();
+BoardView.prototype.request_move_result = function(resp) {
 }
 
-/*
-    Retrieve Board
-*/
-BoardView.prototype.drawBoard = function(fen) {
-    var self = this;
-    // send ajax request to move
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', this.url + '/retrieve_board', true);
-    xhr.onreadystatechange = function() {
-        if(xhr.readyState === XMLHttpRequest.DONE) {
-            if(xhr.status === 200) {
-                var resp = JSON.parse(xhr.response);
-                self.drawPieces(resp.board);
-            }
-        }
-    }
-    xhr.send();
+BoardView.prototype.request_board_result = function(resp) {
+    this.drawPieces(resp.result);
 }
+
+BoardView.prototype.promote_pawn_result = function(resp) {
+    $(this.popup).hide();
+    $(this.popup).find('.'+self.current_turn+'_pawn_promotion').hide();
+    this.changeTurn();
+    this.selected_square = null;
+    this.request_board();
+    if(this.game_type == 1) {
+        this.request_move();
+    }
+}
+
 
 /*
     Draw board from server response
 */
 BoardView.prototype.drawPieces = function(board) {
-    console.log('retrieved board length', board, board.length);
-    for(var i=0; i<board.length; i++) {
-        var y = Math.floor(i / 8);
+  //  console.log('retrieved board length', board, board.length);
+    for(var i=0; i<board.length; i++) {        
+        var tile = this.getTile(i);
         var x = i % 8;
-        var tile = this.getTile(x, y);
+        var y = Math.floor(i/8);
         $(tile).removeClass();
         if((y % 2 == 0 && x % 2 == 0) || (y % 2 != 0 && x % 2 != 0)) {
             $(tile).addClass('black_board_tile');
         } else {
             $(tile).addClass('white_board_tile');
+        }
+        if(this.last_moved_square != null) {
+            //this.setHighlight(this.last_moved_square, 'last_moved_tile');
         }
         $(tile).addClass(this.piece_map[board[i]]);
     }

@@ -58,14 +58,15 @@ public:
 
     // ------- Functions -----------
     uint64_t bitboard() const;
-
+    unsigned int bit_count() const;
+    std::vector<Square> all_bit_indexes() const;
     
     // --------------- Rank and File -----------------------------
     static Bitboard rank(Square s) {
         return Bitboard::rank(Bitboard::to_rank(s));
     }
     
-    static Bitboard rank(uint r) {
+    static Bitboard rank(unsigned int r) {
         if(r > 7) {
             throw std::out_of_range ("Given rank is out of range");
         }
@@ -76,7 +77,7 @@ public:
         return Bitboard::file(Bitboard::to_file(s));
     }
     
-    static Bitboard file(uint f) {
+    static Bitboard file(unsigned int f) {
         if(f > 7) {
             throw std::out_of_range ("Given file is out of range");
         }
@@ -137,10 +138,10 @@ public:
         Same thing as for east but right shift
     */
     static Bitboard west(Square s) {
-        uint rank_index = Bitboard::to_rank(s);
+        unsigned int rank_index = Bitboard::to_rank(s);
         Bitboard rank_bb = Bitboard::rank(rank_index);
 
-        uint file_index = Bitboard::to_file(s);
+        unsigned int file_index = Bitboard::to_file(s);
         rank_bb >>= (7-file_index+1);
         rank_bb &= Bitboard::rank(rank_index);
         return rank_bb;
@@ -291,18 +292,6 @@ public:
         return Bitboard(mask);
     }
     
-    static std::vector<Square> all_bit_indexes(Bitboard b) {
-        std::vector<Square> list;
-        while(b != 0) {
-            unsigned int index = lsb_index(b);
-            Square s = (Square) (index - 1);
-            list.push_back(s);
-            b ^= s;
-        }
-        return list;
-    }
-
-
     // ------- Boolean Operators --------------
     bool operator== (const Bitboard& b) const;
     bool operator== (unsigned int i) const;
