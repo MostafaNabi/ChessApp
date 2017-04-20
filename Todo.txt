@@ -1,6 +1,4 @@
-TODO:
-    1. Make sure Move() is initialised with correct movetype whenever possible
-    3. Implement negamax
-    7. Move object should contain movetype as an option, otherwise the AI will not be able
-       to differentiate between normal moves and castling/promotions.
-  
+TODO
+    Negamax always grabs the worst move
+    In a depth of 1 negamax does work correctly, however when having a depth of 2 it makes mistakes
+    , begins playign for the opposite player.

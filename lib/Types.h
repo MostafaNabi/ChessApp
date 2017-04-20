@@ -70,7 +70,6 @@ namespace Types {
     std::string replace_all_char(std::string s, char c, std::string n);
 }
 
-
 struct Move {
     Square origin;
     Square destination;
@@ -96,5 +95,16 @@ struct Move {
     
     
 };
+
+
+struct NegamaxResult {
+    double evaluation = 0;
+    Move move;
+    NegamaxResult(double eval, Move m) {
+        this->evaluation = eval;
+        this->move = m;
+    }
+};
+
 
 #endif

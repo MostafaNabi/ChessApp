@@ -1,3 +1,4 @@
+
 #include <stdexcept>
 #include <iostream>
 #include "Chess.h"
@@ -69,22 +70,13 @@ Result Chess::request_move() {
     }
     
     Move best_move;
-    double best_eval = INT_MIN;
-    std::vector<Move> move_list = Moves::all_player_move_list(this->board.get_current_turn(), this->board);
-    for(Move m : move_list) {
-        Board temp = this->board;
-        temp.make_move(m);
-        double eval = Evaluation::negamax(temp, this->depth);
-        if(eval > best_eval) {
-            best_move = m;
-            best_eval = eval;
-        }
-    }
+    NegamaxResult result = Evaluation::negamax(this->board, best_move, this->depth);
+    
     double duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
-    std::cout << "Made move (" << best_move.origin << "," << best_move.destination << ") in " << duration <<  std::endl;
+    std::cout << "Made move (" << result.move.origin << "," << result.move.destination << ") in " << duration << "s with evaluation " <<  result.evaluation << std::endl;
 
     
-    return this->make_move(best_move.origin, best_move.destination);
+    return this->make_move(result.move.origin, result.move.destination);
 }
 
 

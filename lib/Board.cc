@@ -36,7 +36,7 @@ Board::Board(const Board& other) {
     for(uint i=0; i<12; i++) {
         this->bitboards[i] = other.bitboards[i];
     }
-
+    this->current_turn = other.current_turn;
     this->castling_rights = other.castling_rights;
 }
 
@@ -45,6 +45,7 @@ Board::Board(Board&& other) {
         this->bitboards[i] = other.bitboards[i];
     }
     this->castling_rights = other.castling_rights;
+    this->current_turn = other.current_turn;
 }
 
 // Destructor, no dynamic memory
@@ -59,6 +60,7 @@ Board& Board::operator=(const Board& other) {
             this->bitboards[i] = other.bitboards[i];
         }
         this->castling_rights = other.castling_rights;
+        this->current_turn = other.current_turn;
     }
     return *this;
 }
@@ -69,6 +71,7 @@ Board& Board::operator=(Board&& other) {
         this->bitboards[i] = other.bitboards[i];
     }
     this->castling_rights = other.castling_rights;
+    this->current_turn = other.current_turn;
     return *this;
 }
 

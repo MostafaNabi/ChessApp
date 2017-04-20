@@ -27,12 +27,12 @@
 
 namespace Evaluation {
     
-    const unsigned int PAWN_VALUE = 100;
-    const unsigned int KNIGHT_VALUE = 350;
-    const unsigned int BISHOP_VALUE = 350;
-    const unsigned int ROOK_VALUE = 525;
-    const unsigned int QUEEN_VALUE = 1000;
-    const unsigned int KING_VALUE = 10000;
+    const int PAWN_VALUE = 100;
+    const int KNIGHT_VALUE = 350;
+    const int BISHOP_VALUE = 350;
+    const int ROOK_VALUE = 525;
+    const int QUEEN_VALUE = 1000;
+    const int KING_VALUE = 10000;
     const int DEPTH = 5;
     
     /* pawn
@@ -92,7 +92,7 @@ namespace Evaluation {
     // Use game state to modify fixed values
     int pawn_mobility(Square s, const Board& b);
     
-    double negamax(const Board& b, int depth);
+    NegamaxResult negamax(const Board& b, Move move, int depth);
     
     
 }

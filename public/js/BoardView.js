@@ -282,6 +282,8 @@ BoardView.prototype.make_move_result = function(resp) {
     // check mate
     if(resp.result == 4) {
         $('#'+this.container_id + ' .message')[0].innerHTML = 'CheckMate!';
+        this.selected_square = null;
+        this.request_board();
         return;
     }
 

@@ -15,8 +15,10 @@ namespace Evaluation {
     double evaluate_board(const Board& board) {
         // call material evaluation
         
-        double val = material_evaluation(board) + mobility_evaluation(board);
+        double val = material_evaluation(board);
         val *= board.get_current_turn();
+        val += mobility_evaluation(board);
+        
         Colour opp_c = (board.get_current_turn() == WHITE) ? BLACK : WHITE;
         if(Moves::is_in_checkmate(opp_c, board)) {
             return INT_MAX;
@@ -25,19 +27,19 @@ namespace Evaluation {
     }
     
     double material_evaluation(const Board& board) {
-        unsigned int num_wk = (board.get_board_for(WHITE_KING) > 0) ? 1 : 0;
-        unsigned int num_wq = board.get_board_for(WHITE_QUEEN).bit_count();
-        unsigned int num_wb = board.get_board_for(WHITE_BISHOP).bit_count();
-        unsigned int num_wn = board.get_board_for(WHITE_KNIGHT).bit_count();
-        unsigned int num_wr = board.get_board_for(WHITE_ROOK).bit_count();
-        unsigned int num_wp = board.get_board_for(WHITE_PAWN).bit_count();
+        int num_wk = (board.get_board_for(WHITE_KING) > 0) ? 1 : 0;
+        int num_wq = board.get_board_for(WHITE_QUEEN).bit_count();
+        int num_wb = board.get_board_for(WHITE_BISHOP).bit_count();
+        int num_wn = board.get_board_for(WHITE_KNIGHT).bit_count();
+        int num_wr = board.get_board_for(WHITE_ROOK).bit_count();
+        int num_wp = board.get_board_for(WHITE_PAWN).bit_count();
         
-        unsigned int num_bk = (board.get_board_for(BLACK_KING) > 0) ? 1 : 0;
-        unsigned int num_bq = board.get_board_for(BLACK_QUEEN).bit_count();
-        unsigned int num_bb = board.get_board_for(BLACK_BISHOP).bit_count();
-        unsigned int num_bn = board.get_board_for(BLACK_KNIGHT).bit_count();
-        unsigned int num_br = board.get_board_for(BLACK_ROOK).bit_count();
-        unsigned int num_bp = board.get_board_for(BLACK_PAWN).bit_count();
+        int num_bk = (board.get_board_for(BLACK_KING) > 0) ? 1 : 0;
+        int num_bq = board.get_board_for(BLACK_QUEEN).bit_count();
+        int num_bb = board.get_board_for(BLACK_BISHOP).bit_count();
+        int num_bn = board.get_board_for(BLACK_KNIGHT).bit_count();
+        int num_br = board.get_board_for(BLACK_ROOK).bit_count();
+        int num_bp = board.get_board_for(BLACK_PAWN).bit_count();
         
         double king_eval = Evaluation::king_value(board) * (num_wk - num_bk);
         double queen_eval = Evaluation::queen_value(board) * (num_wq - num_bq);
@@ -91,28 +93,29 @@ namespace Evaluation {
         return val;
     }
     
-    double negamax(const Board& b, int depth) {
+    NegamaxResult negamax(const Board& b, Move move, int depth) {
         // base case and checkmate
         Colour opp_c = (b.get_current_turn() == WHITE) ? BLACK : WHITE;
         if(Moves::is_in_checkmate(opp_c,b) || depth == 0) {
-            return (-1 * evaluate_board(b));
+            return NegamaxResult(evaluate_board(b), move);
         }
             
         // get all moves
         Move best_move;
-        double best_eval = INT_MIN;
+        NegamaxResult best_result(INT_MIN, Move());
         
         std::vector<Move> all_moves = Moves::all_player_move_list(b.get_current_turn(), b);
         for(Move m : all_moves) {
             Board temp = b;
             temp.make_move(m);
-            double eval = -1 * negamax(temp, depth - 1);
-            if(eval > best_eval) {
-                best_eval = eval;
-                best_move = m;
+            NegamaxResult eval = negamax(temp, m, depth - 1);
+            eval.evaluation *= -1;
+            if(eval.evaluation > best_result.evaluation) {
+                best_result = eval;
+                best_result.move = m;
             }
         }
-        return best_eval;
+        return best_result;
     }
 
 
