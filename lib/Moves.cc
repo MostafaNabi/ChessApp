@@ -300,8 +300,8 @@ namespace Moves {
             
             for(Square dest : dest_list) {
                 Move m = Move(orig, dest);
+                m.move_type = infer_move_type(m, board);
                 if(is_valid_move(m, board)) {
-                    m.move_type = infer_move_type(m, board);
                     move_list.push_back(m);
                 }
             }
@@ -321,8 +321,8 @@ namespace Moves {
             
             for(Square dest : dest_list) {
                 Move m = Move(orig, dest);
+                m.move_type = infer_move_type(m, board);
                 if(is_valid_move(m, board)) {
-                    m.move_type = infer_move_type(m, board);
                     atk_list.push_back(m);
                 }
             }

@@ -97,7 +97,11 @@ namespace Evaluation {
         // base case and checkmate
         Colour opp_c = (b.get_current_turn() == WHITE) ? BLACK : WHITE;
         if(Moves::is_in_checkmate(opp_c,b) || depth == 0) {
-            return NegamaxResult(evaluate_board(b), move);
+            double val = evaluate_board(b);
+            if(move.move_type == CASTLE) {
+                val += 500;
+            }
+            return NegamaxResult(val, move);
         }
             
         // get all moves

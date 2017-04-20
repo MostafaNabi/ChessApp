@@ -87,6 +87,7 @@ Result Chess::make_move(Square orig, Square dest) {
     }
     Move move = Move(orig, dest);
     MoveType move_type = Moves::infer_move_type(move, this->board);
+    move.move_type = move_type;
     
     bool is_valid = Moves::is_valid_move(move, this->board);
     if(!is_valid) {

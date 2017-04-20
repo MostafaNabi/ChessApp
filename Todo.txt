@@ -1,4 +1,9 @@
 TODO
-    Negamax always grabs the worst move
-    In a depth of 1 negamax does work correctly, however when having a depth of 2 it makes mistakes
-    , begins playign for the opposite player.
+    Test all castling.
+
+    Find a way of evaluating special moves like pawn promotion and castling and checkmate.
+
+
+
+BUGS
+    When white loses checkmate message is not given.

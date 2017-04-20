@@ -7,7 +7,7 @@ using std::cout;
 using std::endl;
 
 int main() {
-    Chess chess(SINGLEPLAYER, 2);
+    Chess chess(SINGLEPLAYER, 3);
   /*  cout << chess.board.current_turn << ": " << Evaluation::evaluate_board(chess.board) << endl;
     chess.make_move(SQ_12, SQ_28);
     cout << chess.board.current_turn << ": " << Evaluation::evaluate_board(chess.board) << endl;
