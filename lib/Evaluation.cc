@@ -21,7 +21,7 @@ namespace Evaluation {
         
         Colour opp_c = (board.get_current_turn() == WHITE) ? BLACK : WHITE;
         if(Moves::is_in_checkmate(opp_c, board)) {
-            return INT_MAX;
+            return MAX;
         }
         return val;
     }
@@ -106,7 +106,7 @@ namespace Evaluation {
             
         // get all moves
         Move best_move;
-        NegamaxResult best_result(INT_MIN, Move());
+        NegamaxResult best_result(MIN, Move());
         
         std::vector<Move> all_moves = Moves::all_player_move_list(b.get_current_turn(), b);
         for(Move m : all_moves) {

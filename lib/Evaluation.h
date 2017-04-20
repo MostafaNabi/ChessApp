@@ -21,7 +21,7 @@
 #ifndef Evaluation_h
 #define Evaluation_h
 
-
+#include <limits>
 #include "Moves.h"
 
 
@@ -34,7 +34,9 @@ namespace Evaluation {
     const int QUEEN_VALUE = 1000;
     const int KING_VALUE = 10000;
     const int DEPTH = 5;
-    
+    const int MAX = std::numeric_limits<int>::max();
+    const int MIN = std::numeric_limits<int>::min();
+
     /* pawn
      0,  0,  0,  0,  0,  0,  0,  0,
      50, 50, 50, 50, 50, 50, 50, 50,
