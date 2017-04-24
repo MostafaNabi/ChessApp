@@ -82,9 +82,6 @@ Result Chess::request_move() {
 
 Result Chess::make_move(Square orig, Square dest) {
     Colour c = this->board.get_current_turn();
-    if(Moves::is_in_checkmate(c, this->board)) {
-        return INVALID_MOVE;
-    }
     Move move = Move(orig, dest);
     MoveType move_type = Moves::infer_move_type(move, this->board);
     move.move_type = move_type;
@@ -98,11 +95,11 @@ Result Chess::make_move(Square orig, Square dest) {
     
     if(move_type == PAWN_PROMOTION) {
         return PROMOTE_PAWN;
-        
-    } else if(Moves::is_in_checkmate(Colour(c*-1), board)) {
-        return CHECKMATE;
-        
+
     } else if(Moves::is_in_check(Colour(c*-1), this->board)) {
+        if(Moves::is_in_checkmate(Colour(c*-1), this->board)) {
+            return CHECKMATE;
+        }
         return CHECK;
         
     } else {

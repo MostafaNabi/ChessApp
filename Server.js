@@ -28,7 +28,7 @@ wss.on('connection', function connection(ws) {
     var gt = parseInt(loc.query.game_type);
     var wi;
     if(gt == 1) {
-        wi = new ChessAddon.WebInterface(gt, 2);
+        wi = new ChessAddon.WebInterface(gt, 3);
     } else {
         wi = new ChessAddon.WebInterface(gt);
     }
@@ -43,10 +43,10 @@ wss.on('connection', function connection(ws) {
             case 'make_move': {
                 var result = wi.make_move(req.orig, req.dest);
                 var resp = {
-                            event: 'make_move_result',
-                            result: result,
-                            prev_orig: req.orig, 
-                            prev_dest: req.dest
+                    event: 'make_move_result',
+                    result: result,
+                    prev_orig: req.orig, 
+                    prev_dest: req.dest
                         }
                 ws.send(JSON.stringify(resp));
                 break;
@@ -54,7 +54,11 @@ wss.on('connection', function connection(ws) {
 
             case 'request_move': {
                 var result = wi.request_move();
-                ws.send('{"event":"request_move_result", "value":' + result + '}');
+                var resp = {
+                    event: 'request_move_result',
+                    result: result,
+                }
+                ws.send(JSON.stringify(resp));
                 break;
             }
 
@@ -66,8 +70,8 @@ wss.on('connection', function connection(ws) {
             }
 
             case 'promote_pawn': {
-                var p = req.piece;
-                var orig = req.orig;
+                var p = parseInt(req.piece);
+                var orig = parseInt(req.orig);
                 var result = wi.promote_pawn(orig, p);
                 var resp = {
                     event: 'promote_pawn_result',

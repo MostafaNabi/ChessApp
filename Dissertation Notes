@@ -1,4 +1,4 @@
-rchitecture Notes
+Architecture Notes
     Separate move bitboards and fully valid moves.
     Move bitboards should only check that the target square is valid, i.e
     within reach and not occupied by the same piece. It should not do any checks

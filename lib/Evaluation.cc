@@ -5,7 +5,7 @@
 //  Created by Mostafa Nabi on 17/04/2017.
 //  Copyright © 2017 Mostafa Nabi. All rights reserved.
 //
-
+#include <iostream>
 #include "Evaluation.h"
 
 
@@ -13,53 +13,113 @@ namespace Evaluation {
     
     
     double evaluate_board(const Board& board) {
-        // call material evaluation
-        
-        double val = material_evaluation(board);
-        val *= board.get_current_turn();
-        val += mobility_evaluation(board);
-        
         Colour opp_c = (board.get_current_turn() == WHITE) ? BLACK : WHITE;
+        
+        std::clock_t is_mate_dur = std::clock();
         if(Moves::is_in_checkmate(opp_c, board)) {
             return MAX;
+        }
+        double duration = ( std::clock() - is_mate_dur ) / (double) CLOCKS_PER_SEC;
+   //     std::cout << "Time taken to is_in_checkmate: " << duration << "s" << std::endl;
+
+        
+        std::clock_t mat_eval_dur = std::clock();
+        std::vector<Square> wk_pos = board.get_board_for(WHITE_KING).all_bit_indexes();
+        std::vector<Square> wq_pos = board.get_board_for(WHITE_QUEEN).all_bit_indexes();
+        std::vector<Square> wb_pos= board.get_board_for(WHITE_BISHOP).all_bit_indexes();
+        std::vector<Square> wn_pos = board.get_board_for(WHITE_KNIGHT).all_bit_indexes();
+        std::vector<Square> wr_pos = board.get_board_for(WHITE_ROOK).all_bit_indexes();
+        std::vector<Square> wp_pos = board.get_board_for(WHITE_PAWN).all_bit_indexes();
+        
+        std::vector<Square> bk_pos = board.get_board_for(BLACK_KING).all_bit_indexes();
+        std::vector<Square> bq_pos = board.get_board_for(BLACK_QUEEN).all_bit_indexes();
+        std::vector<Square> bb_pos = board.get_board_for(BLACK_BISHOP).all_bit_indexes();
+        std::vector<Square> bn_pos = board.get_board_for(BLACK_KNIGHT).all_bit_indexes();
+        std::vector<Square> br_pos = board.get_board_for(BLACK_ROOK).all_bit_indexes();
+        std::vector<Square> bp_pos = board.get_board_for(BLACK_PAWN).all_bit_indexes();
+        
+        
+        // -------------------------- Material  Evaluation ----------------------------
+        double king_eval = Evaluation::king_value(board) * (wk_pos.size() - bk_pos.size());
+        double queen_eval = Evaluation::queen_value(board) * (wq_pos.size() - bq_pos.size());
+        double bishop_eval = Evaluation::bishop_value(board) * (wb_pos.size() - bb_pos.size());
+        double knight_eval = Evaluation::knight_value(board) * (wn_pos.size() - bn_pos.size());
+        double rook_eval = Evaluation::rook_value(board) * (wr_pos.size() - br_pos.size());
+        double pawn_eval = Evaluation::pawn_value(board) * (wp_pos.size() - bp_pos.size());
+        double mat_eval = king_eval + queen_eval + bishop_eval + knight_eval + rook_eval + pawn_eval;
+
+        double val = mat_eval * board.get_current_turn();
+        
+        duration = ( std::clock() - is_mate_dur ) / (double) CLOCKS_PER_SEC;
+       // std::cout << "Time taken to material eval: " << duration << "s" << std::endl;
+        
+        // --------------------- White Mobility Eval -------------------------
+        
+        double white_mobil_eval = wk_pos.size() + wq_pos.size() + wb_pos.size() + wn_pos.size() + wr_pos.size() + wp_pos.size();
+        
+        for(Square s : wk_pos) {
+            white_mobil_eval += Evaluation::WHITE_KING_OPENING_TABLE[(int)s];
+        }
+        
+        for(Square s : wq_pos) {
+            white_mobil_eval += Evaluation::WHITE_QUEEN_OPENING_TABLE[(int)s];
+        }
+        
+        for(Square s : wb_pos) {
+            white_mobil_eval += Evaluation::WHITE_BISHOP_OPENING_TABLE[(int)s];
+
+        }
+        
+        for(Square s : wn_pos) {
+            white_mobil_eval += Evaluation::WHITE_KNIGHT_OPENING_TABLE[(int)s];
+        }
+        
+        for(Square s : wn_pos) {
+            white_mobil_eval += Evaluation::WHITE_ROOK_OPENING_TABLE[(int)s];
+        }
+        
+        for(Square s : wp_pos) {
+            white_mobil_eval += Evaluation::WHITE_PAWN_OPENING_TABLE[(int)s];
+        }
+        
+        // --------------------- Black Mobility Eval -------------------------
+        double black_mobil_eval = bk_pos.size() + bq_pos.size() + bb_pos.size() + bn_pos.size() + br_pos.size() + bp_pos.size();
+        
+        for(Square s : bk_pos) {
+            black_mobil_eval += Evaluation::BLACK_KING_OPENING_TABLE[(int)s];
+        }
+        
+        for(Square s : bq_pos) {
+            black_mobil_eval += Evaluation::BLACK_QUEEN_OPENING_TABLE[(int)s];
+        }
+        
+        for(Square s : bb_pos) {
+            black_mobil_eval += Evaluation::BLACK_BISHOP_OPENING_TABLE[(int)s];
+        }
+        
+        for(Square s : bn_pos) {
+            black_mobil_eval += Evaluation::BLACK_KNIGHT_OPENING_TABLE[(int)s];
+        }
+        
+        for(Square s : br_pos) {
+            black_mobil_eval += Evaluation::BLACK_ROOK_OPENING_TABLE[(int)s];
+        }
+        
+        for(Square s : bp_pos) {
+            black_mobil_eval += Evaluation::BLACK_PAWN_OPENING_TABLE[(int)s];
+        }
+        val += (white_mobil_eval - black_mobil_eval) * board.get_current_turn();
+        
+        if(Moves::is_in_check(opp_c, board)) {
+            val += 200;
         }
         return val;
     }
     
-    double material_evaluation(const Board& board) {
-        int num_wk = (board.get_board_for(WHITE_KING) > 0) ? 1 : 0;
-        int num_wq = board.get_board_for(WHITE_QUEEN).bit_count();
-        int num_wb = board.get_board_for(WHITE_BISHOP).bit_count();
-        int num_wn = board.get_board_for(WHITE_KNIGHT).bit_count();
-        int num_wr = board.get_board_for(WHITE_ROOK).bit_count();
-        int num_wp = board.get_board_for(WHITE_PAWN).bit_count();
-        
-        int num_bk = (board.get_board_for(BLACK_KING) > 0) ? 1 : 0;
-        int num_bq = board.get_board_for(BLACK_QUEEN).bit_count();
-        int num_bb = board.get_board_for(BLACK_BISHOP).bit_count();
-        int num_bn = board.get_board_for(BLACK_KNIGHT).bit_count();
-        int num_br = board.get_board_for(BLACK_ROOK).bit_count();
-        int num_bp = board.get_board_for(BLACK_PAWN).bit_count();
-        
-        double king_eval = Evaluation::king_value(board) * (num_wk - num_bk);
-        double queen_eval = Evaluation::queen_value(board) * (num_wq - num_bq);
-        double bishop_eval = Evaluation::bishop_value(board) * (num_wb - num_bb);
-        double knight_eval = Evaluation::knight_value(board) * (num_wn - num_bn);
-        double rook_eval = Evaluation::rook_value(board) * (num_wr - num_br);
-        double pawn_eval = Evaluation::pawn_value(board) * (num_wp - num_bp);
-        
-        double mat_eval = king_eval + queen_eval + bishop_eval + knight_eval + rook_eval + pawn_eval;
-        return mat_eval;
-    }
     
-    double mobility_evaluation(const Board& board) {
-        // blocked/doubled pawns
-        // number of available moves
-        // number of pieces in center stage
-        
-        double num_moves = Moves::all_player_move_list(board.get_current_turn(), board).size();
-        return num_moves;
-    }
+    
+    
+    
     
     
     
@@ -84,23 +144,14 @@ namespace Evaluation {
     }
     
     int pawn_value(const Board& b) {
-        int val = Evaluation::PAWN_VALUE;
-      /*  if(b.get_current_turn() == WHITE) {
-            val += Evaluation::WHITE_PAWN_OPENING_TABLE[(unsigned int)s];
-        } else {
-            val += Evaluation::BLACK_PAWN_OPENING_TABLE[(unsigned int)s];
-        }*/
-        return val;
+        return Evaluation::PAWN_VALUE;
     }
     
     NegamaxResult negamax(const Board& b, Move move, int depth) {
-        // base case and checkmate
+        // base case
         Colour opp_c = (b.get_current_turn() == WHITE) ? BLACK : WHITE;
-        if(Moves::is_in_checkmate(opp_c,b) || depth == 0) {
+        if(depth == 0) {
             double val = evaluate_board(b);
-            if(move.move_type == CASTLE) {
-                val += 500;
-            }
             return NegamaxResult(val, move);
         }
             

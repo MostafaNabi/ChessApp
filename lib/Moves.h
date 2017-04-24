@@ -79,7 +79,7 @@ namespace Moves {
     // Returns positions pawn puts under threat, even if it
     // cannot attack them
     Bitboard get_attack_bitboard(Square s, const Board& board);
-    Bitboard king_attack_bb(Square s, const Board& board);;
+    Bitboard king_attack_bb(Square s, const Board& board);
     Bitboard queen_attack_bb(Square s, const Board& board);
     Bitboard bishop_attack_bb(Square s, const Board& board);
     Bitboard knight_attack_bb(Square s, const Board& board);

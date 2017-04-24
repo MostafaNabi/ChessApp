@@ -1,9 +1,8 @@
 TODO
-    Test all castling.
-
-    Find a way of evaluating special moves like pawn promotion and castling and checkmate.
-
-
+    1. Implement piece boards for all piece types.
+    2. Find a way of evaluating special moves like pawn promotion and castling and checkmate.
+    3. Guide AI to checkmate
+    4. Implement Alpha-Beta pruning
 
 BUGS
-    When white loses checkmate message is not given.
+    [FIXED] Pawns can take king, see elliots screenshots.

@@ -60,8 +60,7 @@ BoardView.prototype.setupWebsocket = function() {
             }
 
             case 'request_move_result': {
-                self.changeTurn();
-                self.request_board();
+                self.request_move_result(resp);
                 break;
             }
 
@@ -277,7 +276,6 @@ BoardView.prototype.make_move_result = function(resp) {
     var dest  = resp.prev_dest;
     this.last_moved_square = dest;
 
-
     //------------------ Special Results -------------------
     // check mate
     if(resp.result == 4) {
@@ -295,7 +293,6 @@ BoardView.prototype.make_move_result = function(resp) {
         return;
     }
 
-
     //------------------ Normal Results -------------------
 
     // normal move
@@ -303,13 +300,10 @@ BoardView.prototype.make_move_result = function(resp) {
         $('#'+this.container_id + ' .message')[0].innerHTML = 'Normal Move!';
     }
 
-
-
     // check
     if(resp.result == 3) {
         $('#'+this.container_id + ' .message')[0].innerHTML = 'Check!';
     }
-
 
     this.changeTurn();
     this.selected_square = null;
@@ -321,6 +315,42 @@ BoardView.prototype.make_move_result = function(resp) {
 }
 
 BoardView.prototype.request_move_result = function(resp) {
+     if(resp.result == 0) {
+        $('#'+this.container_id + ' .message')[0].innerHTML = 'Invalid Move!';
+        return;
+    }
+
+    var orig  = resp.prev_orig;
+    var dest  = resp.prev_dest;
+
+    //------------------ Special Results -------------------
+    // check mate
+    if(resp.result == 4) {
+        $('#'+this.container_id + ' .message')[0].innerHTML = 'CheckMate!';
+        this.request_board();
+        return;
+    }
+
+    // pawn promotion
+    if(resp.result == 2) {
+        $('#'+this.container_id + ' .message')[0].innerHTML = 'Pawn Promotion!';
+        return;
+    }
+
+    // ------------------ Normal Results -------------------
+
+    // normal move
+    if(resp.result == 1) {
+        $('#'+this.container_id + ' .message')[0].innerHTML = 'Normal Move!';
+    }
+
+    // check
+    if(resp.result == 3) {
+        $('#'+this.container_id + ' .message')[0].innerHTML = 'Check!';
+    }
+
+    this.changeTurn();
+    this.request_board();
 }
 
 BoardView.prototype.request_board_result = function(resp) {

@@ -82,7 +82,7 @@ namespace Moves {
     
     bool results_in_check(Move move, const Board& board) {
         Board temp = board;
-        temp.move_piece(move);
+        temp.make_move(move);
         return is_in_check(board.get_current_turn(), temp);
     }
     
