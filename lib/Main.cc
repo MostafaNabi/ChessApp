@@ -3,17 +3,19 @@
 #include <algorithm>
 #include "Chess.h"
 
+// http://inst.eecs.berkeley.edu/~cs61b/fa14/ta-materials/apps/ab_tree_practice/
+
+
 using std::cout;
 using std::endl;
 
 int main() {
-    Chess chess(SINGLEPLAYER, 2);
-    
+    Chess chess(SINGLEPLAYER, 3);
     
     while(true) {
         int s1;
         int  s2;
-        cout << "Player " << chess.board.get_current_turn() << " Move: " << endl;
+        cout << "Player " << chess.board.get_current_turn() << " is: " << endl;
         std::cin >> s1;
         std::cin >> s2;
         Result r = chess.make_move((Square) s1, Square(s2));
@@ -26,8 +28,10 @@ int main() {
             std::cin >> p;
             chess.promote_pawn((Square) s2, (Piece)p);
         }
-    cout << chess.request_move() << endl;
+        cout << chess.request_move() << endl;
     }
+    
+    
     std::vector<Piece> v = chess.retrieve_board();
     for(int i=0; i<v.size(); i++) {
         if(i % 8 == 0 && i !=0) {

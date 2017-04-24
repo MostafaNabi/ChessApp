@@ -72,7 +72,7 @@ namespace Evaluation {
             white_mobil_eval -= 200;
         }
         
-     /*   for(Square s : wk_pos) {
+        for(Square s : wk_pos) {
             white_mobil_eval += Evaluation::WHITE_KING_OPENING_TABLE[(int)s];
         }
         
@@ -96,7 +96,7 @@ namespace Evaluation {
         for(Square s : wp_pos) {
             white_mobil_eval += Evaluation::WHITE_PAWN_OPENING_TABLE[(int)s];
         }
-        */
+      
         // --------------------- Black Mobility Eval -------------------------
         double black_mobil_eval = bk_pos.size() + bq_pos.size() + bb_pos.size() + bn_pos.size() + br_pos.size() + bp_pos.size();
         if( !(board.castling_rights & BLACK_KING_CR)) {
@@ -105,7 +105,7 @@ namespace Evaluation {
         
         
         
-     /*   for(Square s : bk_pos) {
+       for(Square s : bk_pos) {
             black_mobil_eval += Evaluation::BLACK_KING_OPENING_TABLE[(int)s];
         }
         
@@ -125,10 +125,11 @@ namespace Evaluation {
             black_mobil_eval += Evaluation::BLACK_ROOK_OPENING_TABLE[(int)s];
         }
         
+        
         for(Square s : bp_pos) {
             black_mobil_eval += Evaluation::BLACK_PAWN_OPENING_TABLE[(int)s];
         }
-        */
+      
         if(board.get_current_turn() == WHITE) {
             val += white_mobil_eval;
         } else {
@@ -144,12 +145,6 @@ namespace Evaluation {
         }
         return val;
     }
-    
-    
-    
-    
-    
-    
     
     
     int king_value(const Board& b) {
@@ -176,30 +171,72 @@ namespace Evaluation {
         return Evaluation::PAWN_VALUE;
     }
     
-    NegamaxResult negamax(const Board& b, Move move, int depth) {
-        // base case
-        Colour opp_c = (b.get_current_turn() == WHITE) ? BLACK : WHITE;
-        if(depth == 0) {
-            double val = evaluate_board(b);
-            return NegamaxResult(val, move);
-        }
-        
-        // get all moves
-        Move best_move;
-        NegamaxResult best_result(MIN, move);
-        
+    NegamaxResult maxi(const Board& b, Move move, int depth, double alpha, double beta) {
         std::vector<Move> all_moves = Moves::all_player_move_list(b.get_current_turn(), b);
+
+        if(depth == 0 || all_moves.size() == 0) {
+            double evaluation = evaluate_board(b);
+            return NegamaxResult(evaluation, move);
+        }
+        NegamaxResult best_result(MIN, move);
+
         for(Move m : all_moves) {
-            Board temp = b;
-            temp.make_move(m);
-            NegamaxResult eval = negamax(temp, m, depth - 1);
-            eval.evaluation *= -1;
-            if(eval.evaluation > best_result.evaluation) {
-                best_result = eval;
+            Board temp_board = b;
+            temp_board.make_move(m);
+            
+            NegamaxResult temp_result = mini(temp_board, m, depth - 1, alpha, beta);
+         
+            if(temp_result.evaluation >= beta) {
+                return NegamaxResult(beta, move); // hard fail, this will never happen in the first level as beta = +infinity
+            }
+            
+            if( temp_result.evaluation > alpha) {
+                alpha = temp_result.evaluation;
+            }
+            
+            if(temp_result.evaluation > best_result.evaluation) {
+                best_result.evaluation = temp_result.evaluation;
                 best_result.move = m;
             }
+            
+            
         }
         return best_result;
     }
+    
+    NegamaxResult mini(const Board& b, Move move, int depth, double alpha, double beta) {
+        std::vector<Move> all_moves = Moves::all_player_move_list(b.get_current_turn(), b);
+        
+        if(depth == 0 || all_moves.size() == 0) {
+            double evaluation = evaluate_board(b);
+            return NegamaxResult(evaluation*-1, move);
+        }
+        NegamaxResult best_result(MAX, move);
+        
+        for(Move m : all_moves) {
+            Board temp_board = b;
+            temp_board.make_move(m);
+            
+            NegamaxResult temp_result = maxi(temp_board, m, depth-1, alpha, beta);
+            
+            if(temp_result.evaluation <= alpha) { // If this result is worse than the lower bound Max
+                return NegamaxResult(alpha, move); // has found we know he wont choose this so cut off.
+            }                                     // In the first Mini search alpha = -infinity so this wont happen.
+            
+            if(temp_result.evaluation < beta) { // Try to find a result thats worse tha Max's upper bound
+                beta = temp_result.evaluation;  // but better than his lower bound.
+            }
+            
+            if(temp_result.evaluation < best_result.evaluation) {
+                best_result.evaluation = temp_result.evaluation;
+                best_result.move = m;
+            }
+        }
+        
+        return best_result;
+    }
+    
+    
+    
 
 }

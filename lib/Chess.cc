@@ -65,8 +65,10 @@ Result Chess::request_move() {
     else {
         std::cout << "White is thinking..." << std::endl;
     }
+    
     Move best_move;
-    NegamaxResult result = Evaluation::negamax(this->board, best_move, this->depth);
+    NegamaxResult result = Evaluation::maxi(this->board, best_move, this->depth, Evaluation::MIN, Evaluation::MAX);
+    
     double duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
     std::cout << "Made move (" << result.move.origin << "," << result.move.destination << ") in " << duration << "s with evaluation " <<  result.evaluation << std::endl;
     return this->make_move(result.move.origin, result.move.destination);

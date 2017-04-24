@@ -28,7 +28,7 @@ wss.on('connection', function connection(ws) {
     var gt = parseInt(loc.query.game_type);
     var wi;
     if(gt == 1) {
-        wi = new ChessAddon.WebInterface(gt, 2);
+        wi = new ChessAddon.WebInterface(gt, 3);
     } else {
         wi = new ChessAddon.WebInterface(gt);
     }

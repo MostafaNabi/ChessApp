@@ -214,7 +214,9 @@ namespace Evaluation {
     int pawn_mobility(Square s, const Board& b);
     
     NegamaxResult negamax(const Board& b, Move move, int depth);
-    
+    NegamaxResult maxi(const Board& b, Move move, int depth, double alpha, double beta);
+    NegamaxResult mini(const Board& b, Move move, int depth, double alpha, double beta);
+
     
 }
 
