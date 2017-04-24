@@ -57,25 +57,18 @@ Result Chess::request_move() {
     if(this->game_type != SINGLEPLAYER) {
         throw std::logic_error("Cannot request if not singleplayer");
     }
-    
     std::clock_t start = std::clock();
 
-    
-    
     if(this->board.get_current_turn() == BLACK) {
         std::cout << "Black is thinking..." << std::endl;
     }
     else {
         std::cout << "White is thinking..." << std::endl;
     }
-    
     Move best_move;
     NegamaxResult result = Evaluation::negamax(this->board, best_move, this->depth);
-    
     double duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
     std::cout << "Made move (" << result.move.origin << "," << result.move.destination << ") in " << duration << "s with evaluation " <<  result.evaluation << std::endl;
-
-    
     return this->make_move(result.move.origin, result.move.destination);
 }
 

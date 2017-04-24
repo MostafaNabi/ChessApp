@@ -34,8 +34,8 @@ namespace Evaluation {
     const int QUEEN_VALUE = 1000;
     const int KING_VALUE = 10000;
     const int DEPTH = 5;
-    const int MAX = std::numeric_limits<int>::max();
-    const int MIN = std::numeric_limits<int>::min();
+    const double MAX = std::numeric_limits<int>::max();
+    const double MIN = std::numeric_limits<int>::min();
 
     /* pawn
      0,  0,  0,  0,  0,  0,  0,  0,
@@ -185,14 +185,14 @@ namespace Evaluation {
     
     
     static constexpr int BLACK_KING_OPENING_TABLE[64] = {
-        -50,-40,-30,-20,-20,-30,-40,-50,
-        -30,-20,-10,  0,  0,-10,-20,-30,
-        -30,-10, 20, 30, 30, 20,-10,-30,
-        -30,-10, 30, 40, 40, 30,-10,-30,
-        -30,-10, 30, 40, 40, 30,-10,-30,
-        -30,-10, 20, 30, 30, 20,-10,-30,
-        -30,-30,  0,  0,  0,  0,-30,-30,
-        -50,-30,-30,-30,-30,-30,-30,-50
+        -30,-40,-40,-50,-50,-40,-40,-30,
+        -30,-40,-40,-50,-50,-40,-40,-30,
+        -30,-40,-40,-50,-50,-40,-40,-30,
+        -30,-40,-40,-50,-50,-40,-40,-30,
+        -20,-30,-30,-40,-40,-30,-30,-20,
+        -10,-20,-20,-20,-20,-20,-20,-10,
+         20, 20,  0,  0,  0,  0, 20, 20,
+         20, 30, 10,  0,  0, 10, 30, 20
     };
 
     

@@ -7,7 +7,7 @@ using std::cout;
 using std::endl;
 
 int main() {
-    Chess chess(SINGLEPLAYER, 3);
+    Chess chess(SINGLEPLAYER, 2);
     
     
     while(true) {
