@@ -1,4 +1,4 @@
-CXX=clang++
+CXX=g++
 CXXFLAGS=-std=c++11 -pedantic
 OBJ=./lib/Main.o ./lib/Chess.o ./lib/Evaluation.o ./lib/Moves.o ./lib/Board.o ./lib/Bitboard.o ./lib/Types.o
 SRC=./lib/Main.cc ./lib/Chess.cc ./lib/Evaluation.cc ./lib/Moves.cc ./lib/Board.cc ./lib/Bitboard.cc ./lib/Types.cc
