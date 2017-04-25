@@ -1,8 +1,7 @@
 TODO
-    1. Implement piece boards for all piece types.
-    2. Find a way of evaluating special moves like pawn promotion and castling and checkmate.
-    3. Guide AI to checkmate
-    4. Implement Alpha-Beta pruning
+    Need to test alpha-beta
+    Split evaluate into white and black sides
+    Print list of moves the AI has chosen
 
 BUGS
-    [FIXED] Pawns can take king, see elliots screenshots.
+    AI starts moving horses and nothing else.
