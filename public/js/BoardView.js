@@ -10,9 +10,8 @@ function BoardView(game_type, container_id) {
     this.current_turn = 'white';
     this.move_log_counter = 1;
     this.ai_log_counter = 1;
-
-    this.websocket = new WebSocket('ws:'+window.location.host+'?game_type='+game_type);
-
+    this.move_timer = 0;
+    this.show_game = false;
     this.piece_map = {
         0:'chess_piece_white_king',
         1:'chess_piece_white_queen',
@@ -29,11 +28,6 @@ function BoardView(game_type, container_id) {
         11:'chess_piece_black_pawn',
         12:'chess_piece_none'
     }
-
-    var self = this;
-    this.websocket.onopen = function() {
-        self.init();
-    }
 }
 
 BoardView.prototype.changeTurn = function() {
@@ -45,9 +39,13 @@ BoardView.prototype.changeTurn = function() {
 }
 
 BoardView.prototype.init = function() {
-    this.setupWebsocket();
-    this.setupBoard();
-    this.setupPopup();
+    var self = this;
+    this.websocket = new WebSocket('ws:'+window.location.host+'?game_type='+this.game_type);
+    this.websocket.onopen = function() {
+        self.setupWebsocket();
+        self.setupBoard();
+        self.setupPopup();
+    }
 }
 
 
@@ -140,6 +138,10 @@ BoardView.prototype.buildFromFen = function(fen) {
 }
 
 BoardView.prototype.display = function() {
+    if(!this.show_game) {
+        return;
+    }
+
     $('.navigation_display_container').hide();
     console.log('showing', this.container_id);
     $('#'+this.container_id).show();
@@ -258,6 +260,7 @@ BoardView.prototype.promote_pawn = function(piece) {
 
 BoardView.prototype.request_move = function() {
     var req = {'event':'request_move'}
+    this.move_timer = Date.now();
     this.websocket.send(JSON.stringify(req));
 }
 

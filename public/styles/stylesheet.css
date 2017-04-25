@@ -18,6 +18,16 @@
     background-color: grey;
 }
 
+
+#enter_game_password {
+    display: block;
+    width: 200px;
+}
+
+#enter_game_button {
+    display: block;
+    width: 100px;
+}
 .white_pawn_promotion {
     display: flex;
     position: relative;
