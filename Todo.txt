@@ -1,7 +1,5 @@
 TODO
-    Need to test alpha-beta
-    Split evaluate into white and black sides
-    Print list of moves the AI has chosen
+   AI needs to doa quescence (horizontal) search.
 
 BUGS
     AI starts moving horses and nothing else.

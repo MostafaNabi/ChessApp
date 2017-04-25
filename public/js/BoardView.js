@@ -8,6 +8,8 @@ function BoardView(game_type, container_id) {
     this.selected_square = null;
     this.last_moved_square = null;
     this.current_turn = 'white';
+    this.move_log_counter = 1;
+    this.ai_log_counter = 1;
 
     this.websocket = new WebSocket('ws:'+window.location.host+'?game_type='+game_type);
 
@@ -272,14 +274,28 @@ BoardView.prototype.make_move_result = function(resp) {
         return;
     }
 
-    var orig  = resp.prev_orig;
-    var dest  = resp.prev_dest;
+    var orig  = resp.origin;
+    var dest  = resp.destination;
     this.last_moved_square = dest;
+
+    var src_x = orig % 8;
+    var src_y = Math.floor(orig / 8);
+    var dest_x = dest % 8; 
+    var dest_y = Math.floor(dest / 8); 
+
+    var player_name = this.current_turn.charAt(0).toUpperCase() + this.current_turn.substr(1);
+
+    var str = player_name + ': (' + src_x + ',' + src_y +') -> ('  + dest_x + ',' + dest_y +')';
+    var move_log_div = $('#'+this.container_id + ' .move_logs');
+    move_log_div.append('<p>' + this.move_log_counter +'. ' + str + '</p>');
+    this.move_log_counter++;
+   // move_log_div.animate({scrollTop: move_log_div[0].scrollHeight});
+    move_log_div.scrollTop(move_log_div[0].scrollHeight);
 
     //------------------ Special Results -------------------
     // check mate
     if(resp.result == 4) {
-        $('#'+this.container_id + ' .message')[0].innerHTML = 'CheckMate!';
+        $('#'+this.container_id + ' .message')[0].innerHTML = player_name + ' CheckMates!';
         this.selected_square = null;
         this.request_board();
         return;
@@ -287,7 +303,7 @@ BoardView.prototype.make_move_result = function(resp) {
 
     // pawn promotion
     if(resp.result == 2) {
-        $('#'+this.container_id + ' .message')[0].innerHTML = 'Pawn Promotion!';
+        $('#'+this.container_id + ' .message')[0].innerHTML = player_name + ' Promotes Pawn!';
         $(this.popup).show();
         $(this.popup).find('.'+this.current_turn+'_pawn_promotion').show();
         return;
@@ -297,16 +313,18 @@ BoardView.prototype.make_move_result = function(resp) {
 
     // normal move
     if(resp.result == 1) {
-        $('#'+this.container_id + ' .message')[0].innerHTML = 'Normal Move!';
+        $('#'+this.container_id + ' .message')[0].innerHTML = player_name + ' Moves';
     }
 
     // check
     if(resp.result == 3) {
-        $('#'+this.container_id + ' .message')[0].innerHTML = 'Check!';
+        $('#'+this.container_id + ' .message')[0].innerHTML = player_name + ' Checks!';
     }
 
     this.changeTurn();
     this.selected_square = null;
+
+
 
     this.request_board();
     if(this.game_type == 1) {
@@ -320,20 +338,55 @@ BoardView.prototype.request_move_result = function(resp) {
         return;
     }
 
-    var orig  = resp.prev_orig;
-    var dest  = resp.prev_dest;
+    var orig  = resp.origin;
+    var dest  = resp.destination;
+
+    var src_x = orig % 8;
+    var src_y = Math.floor(orig / 8);
+    var dest_x = dest % 8; 
+    var dest_y = Math.floor(dest / 8); 
+    var player_name = this.current_turn.charAt(0).toUpperCase() + this.current_turn.substr(1);
+
+    var str = player_name + ': (' + src_x + ',' + src_y +') -> ('  + dest_x + ',' + dest_y +')';
+    var move_log_div = $('#'+this.container_id + ' .move_logs');
+    move_log_div.append('<p>' + this.move_log_counter +'. ' + str + '</p>');
+    this.move_log_counter++;
+     move_log_div.scrollTop(move_log_div[0].scrollHeight);
+
+
+    var ai_log_div = $('#'+this.container_id + ' .ai_logs');
+    var move_list_str = this.ai_log_counter + '. ' + player_name  + ' predicts: ';
+    this.ai_log_counter++;
+    resp.move_list = resp.move_list.reverse();
+    for(var i=0; i<resp.move_list.length; i++) {
+        var el = resp.move_list[i];
+        var x = el.origin % 8;
+        var y = Math.floor(el.origin / 8);
+
+        var dx = el.destination % 8;
+        var dy = Math.floor(el.destination / 8);
+        move_list_str += '[(' + x + ',' + y +') -> ('  + dx + ',' + dy +')]';
+        if(i < resp.move_list.length -1) {
+            move_list_str += ', ';
+        }
+    }
+    ai_log_div.append('<p>' + move_list_str + '</p>');
+    ai_log_div.scrollTop(ai_log_div[0].scrollHeight);
+
+
+
 
     //------------------ Special Results -------------------
     // check mate
     if(resp.result == 4) {
-        $('#'+this.container_id + ' .message')[0].innerHTML = 'CheckMate!';
+        $('#'+this.container_id + ' .message')[0].innerHTML = player_name + ' CheckMates!';
         this.request_board();
         return;
     }
 
     // pawn promotion
     if(resp.result == 2) {
-        $('#'+this.container_id + ' .message')[0].innerHTML = 'Pawn Promotion!';
+        $('#'+this.container_id + ' .message')[0].innerHTML = player_name + ' Promotes Pawn!';
         return;
     }
 
@@ -341,12 +394,12 @@ BoardView.prototype.request_move_result = function(resp) {
 
     // normal move
     if(resp.result == 1) {
-        $('#'+this.container_id + ' .message')[0].innerHTML = 'Normal Move!';
+        $('#'+this.container_id + ' .message')[0].innerHTML = player_name + ' Moves';
     }
 
     // check
     if(resp.result == 3) {
-        $('#'+this.container_id + ' .message')[0].innerHTML = 'Check!';
+        $('#'+this.container_id + ' .message')[0].innerHTML = player_name + ' Checks!';
     }
 
     this.changeTurn();

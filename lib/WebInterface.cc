@@ -192,8 +192,9 @@ void  WebInterface::request_move(const v8::FunctionCallbackInfo<v8::Value>& args
         return;
     }
     WebInterface* obj = ObjectWrap::Unwrap<WebInterface>(args.Holder());
-    int result = obj->chessapp->request_move();
-    args.GetReturnValue().Set( Integer::New(isolate, result));
+    EvaluationResult result = obj->chessapp->request_move();
+    Local<String> str = String::NewFromUtf8(isolate, result.to_string().c_str());
+    args.GetReturnValue().Set(str);
 }
 
 

@@ -3,6 +3,7 @@
 
 // Inspired by stockfish
 #include <string>
+#include <vector>
 enum GameType {
     SINGLEPLAYER = 1,
     TWOPLAYER = 2
@@ -97,12 +98,31 @@ struct Move {
 };
 
 
-struct NegamaxResult {
+struct EvaluationResult {
     double evaluation = 0;
     Move move;
-    NegamaxResult(double eval, Move m) {
+    std::vector<Move> move_list;
+    Result move_result = VALID_MOVE;
+
+    EvaluationResult(double eval, Move m) {
         this->evaluation = eval;
         this->move = m;
+    }
+    
+    std::string to_string() {
+        std::string str = "{ \"result\":" + std::to_string(move_result)+ ",";
+        str += " \"origin\":" + std::to_string(move.origin) + ", \"destination\":" + std::to_string(move.destination);
+        str += ", \"move_list\":[";
+        
+        for(unsigned int i=0; i<move_list.size(); i++) {
+            Move m = move_list[i];
+            str += "{ \"origin\":" + std::to_string(m.origin) + ", \"destination\":" + std::to_string(m.destination) + "}";
+            if(i < move_list.size() - 1) {
+                str += ",";
+            }
+        }
+        str += "]}";
+        return str;
     }
 };
 

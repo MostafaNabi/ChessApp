@@ -93,7 +93,7 @@ namespace Evaluation {
         return val;
     }
     
-    NegamaxResult negamax(const Board& b, Move move, int depth) {
+    EvaluationResult negamax(const Board& b, Move move, int depth) {
         // base case and checkmate
         Colour opp_c = (b.get_current_turn() == WHITE) ? BLACK : WHITE;
         if(Moves::is_in_checkmate(opp_c,b) || depth == 0) {
@@ -101,18 +101,18 @@ namespace Evaluation {
             if(move.move_type == CASTLE) {
                 val += 500;
             }
-            return NegamaxResult(val, move);
+            return EvaluationResult(val, move);
         }
         
         // get all moves
         Move best_move;
-        NegamaxResult best_result(MIN, Move());
+        EvaluationResult best_result(MIN, Move());
         
         std::vector<Move> all_moves = Moves::all_player_move_list(b.get_current_turn(), b);
         for(Move m : all_moves) {
             Board temp = b;
             temp.make_move(m);
-            NegamaxResult eval = negamax(temp, m, depth - 1);
+            EvaluationResult eval = negamax(temp, m, depth - 1);
             eval.evaluation *= -1;
             if(eval.evaluation > best_result.evaluation) {
                 best_result = eval;

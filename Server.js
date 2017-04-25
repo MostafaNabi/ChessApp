@@ -45,19 +45,17 @@ wss.on('connection', function connection(ws) {
                 var resp = {
                     event: 'make_move_result',
                     result: result,
-                    prev_orig: req.orig, 
-                    prev_dest: req.dest
-                        }
+                    origin: req.orig, 
+                    destination: req.dest
+                }
                 ws.send(JSON.stringify(resp));
                 break;
             }
 
             case 'request_move': {
                 var result = wi.request_move();
-                var resp = {
-                    event: 'request_move_result',
-                    result: result,
-                }
+                var resp = JSON.parse(result);
+                resp.event = 'request_move_result';
                 ws.send(JSON.stringify(resp));
                 break;
             }

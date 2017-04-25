@@ -36,7 +36,8 @@ namespace Evaluation {
     const int DEPTH = 5;
     const double MAX = std::numeric_limits<int>::max();
     const double MIN = std::numeric_limits<int>::min();
-
+    extern int node_count;
+    
     /* pawn
      0,  0,  0,  0,  0,  0,  0,  0,
      50, 50, 50, 50, 50, 50, 50, 50,
@@ -213,9 +214,9 @@ namespace Evaluation {
     // Use game state to modify fixed values
     int pawn_mobility(Square s, const Board& b);
     
-    NegamaxResult negamax(const Board& b, Move move, int depth);
-    NegamaxResult maxi(const Board& b, Move move, int depth, double alpha, double beta);
-    NegamaxResult mini(const Board& b, Move move, int depth, double alpha, double beta);
+    EvaluationResult negamax(const Board& b, Move move, int depth);
+    EvaluationResult maxi(const Board& b, Move move, int depth, double alpha, double beta);
+    EvaluationResult mini(const Board& b, Move move, int depth, double alpha, double beta);
 
     
 }

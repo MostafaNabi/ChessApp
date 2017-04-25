@@ -6,7 +6,6 @@ typedef unsigned int uint;
 
 // ------ Constructors -------------
 Board::Board() {
-    std::cout << "Called Board empty constructor" << std::endl;
     this->bitboards[0]  = Bitboard(0x0000000000000010); // White King
     this->bitboards[1]  = Bitboard(0x0000000000000008); // White Queen
     this->bitboards[2]  = Bitboard(0x0000000000000024); // White Bishop
@@ -274,13 +273,6 @@ void Board::build_from_fen(std::string fen) {
     b_str = Types::replace_all_char(b_str, '6', "______");
     b_str = Types::replace_all_char(b_str, '7', "_______");
     b_str = Types::replace_all_char(b_str, '8', "________");
-
-    std::cout << "Extracted board     string: " << b_str << std::endl;
-    std::cout << "Extracted turn      string: " << turn_str << std::endl;
-    std::cout << "Extracted castle    string: " << castle_str << std::endl;
-    std::cout << "Extracted enpassant string: " << enpassant_str << std::endl;
-    std::cout << "Extracted halfmove  string: " << halfmove_str << std::endl;
-    std::cout << "Extracted fullmove  string: " << fullmove_str << std::endl;
 
     uint64_t black_rook = 0;
     uint64_t black_knight = 0;

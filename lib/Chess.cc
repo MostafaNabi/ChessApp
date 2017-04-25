@@ -53,25 +53,15 @@ void Chess::set_ai_difficulty(int ai) {
 }
 
 
-Result Chess::request_move() {
+EvaluationResult Chess::request_move() {
     if(this->game_type != SINGLEPLAYER) {
         throw std::logic_error("Cannot request if not singleplayer");
     }
-    std::clock_t start = std::clock();
-
-    if(this->board.get_current_turn() == BLACK) {
-        std::cout << "Black is thinking..." << std::endl;
-    }
-    else {
-        std::cout << "White is thinking..." << std::endl;
-    }
-    
-    Move best_move;
-    NegamaxResult result = Evaluation::maxi(this->board, best_move, this->depth, Evaluation::MIN, Evaluation::MAX);
-    
-    double duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
-    std::cout << "Made move (" << result.move.origin << "," << result.move.destination << ") in " << duration << "s with evaluation " <<  result.evaluation << std::endl;
-    return this->make_move(result.move.origin, result.move.destination);
+    EvaluationResult eval_result = Evaluation::maxi(this->board, Move(), this->depth, Evaluation::MIN, Evaluation::MAX);
+    Evaluation::node_count = 0;
+    Result res = this->make_move(eval_result.move.origin, eval_result.move.destination);
+    eval_result.move_result = res;
+    return eval_result;
 }
 
 

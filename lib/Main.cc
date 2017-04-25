@@ -16,11 +16,14 @@ int main() {
         int s1;
         int  s2;
         cout << "Player " << chess.board.get_current_turn() << " is: " << endl;
+        
         std::cin >> s1;
         std::cin >> s2;
         Result r = chess.make_move((Square) s1, Square(s2));
+        
         if(r == 0) {cout << "Invalid move" << endl; continue;}
         cout << "Result: " << r << endl;
+        
         if(r == CHECKMATE) {cout << "Checkmate!" << endl; break;}
         if(r == PROMOTE_PAWN) {
             cout << "Promote Pawn!" << endl;
@@ -28,7 +31,8 @@ int main() {
             std::cin >> p;
             chess.promote_pawn((Square) s2, (Piece)p);
         }
-        cout << chess.request_move() << endl;
+        
+        cout << chess.request_move().to_string();
     }
     
     
