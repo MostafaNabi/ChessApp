@@ -1,11 +1,5 @@
 Chess mages taken from: https://commons.wikimedia.org/wiki/Category:PNG_chess_pieces/Standard_transparent
 
-
-I have uploaded my software as a zip file, since I used Github for my version control, and including all the
-packages I have used the number of files has become rather large.
-
-
-
 First to setup the chess app stand-alone
 
 1. The makefile uses the g++ compiler and c++11 library
