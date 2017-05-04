@@ -12,39 +12,8 @@ using std::endl;
 int main() {
     Chess chess(SINGLEPLAYER, 3);
     
-    while(true) {
-        int s1;
-        int  s2;
-        cout << "Player " << chess.board.get_current_turn() << " is: " << endl;
-        
-        std::cin >> s1;
-        std::cin >> s2;
-        Result r = chess.make_move((Square) s1, Square(s2));
-        
-        if(r == 0) {cout << "Invalid move" << endl; continue;}
-        cout << "Result: " << r << endl;
-        
-        if(r == CHECKMATE) {cout << "Checkmate!" << endl; break;}
-        if(r == PROMOTE_PAWN) {
-            cout << "Promote Pawn!" << endl;
-            int p;
-            std::cin >> p;
-            chess.promote_pawn((Square) s2, (Piece)p);
-        }
-        
-        cout << chess.request_move().to_string();
-    }
     
-    
-    std::vector<Piece> v = chess.retrieve_board();
-    for(int i=0; i<v.size(); i++) {
-        if(i % 8 == 0 && i !=0) {
-            cout << endl;
-        }
-        if(v[i] < 10) { cout << "_";}
-        cout << v[i] << ",";
+    std::string fen = "rnb1k1nr/pppp1ppp/5q2/2b1p3/4P3/NP5P/P1PP1PP1/R1BQKBNR b KQkq - 7 4";
+    chess.build_from_fen(fen);
+    cout << chess.request_move().move_result << endl;
     }
-
-    cout << endl;
-    return 0;
-}

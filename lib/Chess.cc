@@ -44,6 +44,10 @@ void Chess::build_from_fen(std::string fen) {
     this->board.build_from_fen(fen);
 }
 
+Colour Chess::get_current_turn() {
+    return this->board.get_current_turn();
+}
+
 void Chess::set_ai_difficulty(int ai) {
     if(ai < 1 || ai > 10) {
         throw std::invalid_argument("AI difficulty must be between 1 and 10");

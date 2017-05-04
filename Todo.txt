@@ -3,3 +3,7 @@ TODO
 
 BUGS
     AI starts moving horses and nothing else.
+    AI goes into infinite loop when checkmating.
+    MAJOR BUG:
+        AI castles after rook is taken.
+        The rook respawns after castling and it comes back.

@@ -190,7 +190,7 @@ namespace Evaluation {
             EvaluationResult temp_result = mini(temp_board, m, depth - 1, alpha, beta);
          
             if(temp_result.evaluation >= beta) {
-                return EvaluationResult(beta, move); // hard fail, this will never happen in the first level as beta = +infinity
+                return EvaluationResult(beta, m); // hard fail, this will never happen in the first level as beta = +infinity
             }
             
             if( temp_result.evaluation > alpha) {
@@ -227,7 +227,7 @@ namespace Evaluation {
             EvaluationResult temp_result = maxi(temp_board, m, depth-1, alpha, beta);
             
             if(temp_result.evaluation <= alpha) { // If this result is worse than the lower bound Max
-                return EvaluationResult(alpha, move); // has found we know he wont choose this so cut off.
+                return EvaluationResult(alpha, m); // has found we know he wont choose this so cut off.
             }                                     // In the first Mini search alpha = -infinity so this wont happen.
             
             if(temp_result.evaluation < beta) { // Try to find a result thats worse tha Max's upper bound

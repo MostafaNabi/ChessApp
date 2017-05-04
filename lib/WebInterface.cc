@@ -48,6 +48,7 @@ void WebInterface::Init(Local<Object> exports) {
 
   // Prototype
   NODE_SET_PROTOTYPE_METHOD(tpl, "build_from_fen", build_from_fen);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "get_current_turn", get_current_turn);
   NODE_SET_PROTOTYPE_METHOD(tpl, "set_ai_difficulty", set_ai_difficulty);
   NODE_SET_PROTOTYPE_METHOD(tpl, "request_move", request_move);
   NODE_SET_PROTOTYPE_METHOD(tpl, "make_move", make_move);
@@ -113,6 +114,15 @@ void WebInterface::build_from_fen(const FunctionCallbackInfo<Value>& args) {
     WebInterface* obj = ObjectWrap::Unwrap<WebInterface>(args.Holder());
     obj->chessapp->build_from_fen(f);
 }
+
+void WebInterface::get_current_turn(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = args.GetIsolate();
+
+    WebInterface* obj = ObjectWrap::Unwrap<WebInterface>(args.Holder());
+    int turn = (int) obj->chessapp->get_current_turn();
+    args.GetReturnValue().Set( Integer::New(isolate, turn));
+}
+
 
 void WebInterface::set_ai_difficulty(const FunctionCallbackInfo<Value>& args) {
     Isolate* isolate = args.GetIsolate();

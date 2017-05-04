@@ -11,7 +11,6 @@ function BoardView(game_type, container_id) {
     this.move_log_counter = 1;
     this.ai_log_counter = 1;
     this.move_timer = 0;
-    this.show_game = false;
     this.piece_map = {
         0:'chess_piece_white_king',
         1:'chess_piece_white_queen',
@@ -73,6 +72,11 @@ BoardView.prototype.setupWebsocket = function() {
                 self.promote_pawn_result(resp);
                 break;
             }
+
+            case 'build_from_fen_result': {
+                self.build_from_fen_result(resp);
+                break;
+            }
         }
     });
 }
@@ -129,19 +133,15 @@ BoardView.prototype.setupBoard = function(fen) {
 /*
     Build board from a FEN string
 */
-BoardView.prototype.buildFromFen = function(fen) {
+BoardView.prototype.validate_fen = function(fen) {
     var matches = fen.match(/(([KQBNRPkqbnrp\/1-8]+)(\ [bw]\ )(-|[KQkq]+\ )(-\ |[a-h][1-8]\ )(\d+\ )(\d+))/);
     if(matches == null) {
-        window.alert('Fen string is not in correct form');
-        return;
+        return false;
     }
+    return true;
 }
 
 BoardView.prototype.display = function() {
-    if(!this.show_game) {
-        return;
-    }
-
     $('.navigation_display_container').hide();
     console.log('showing', this.container_id);
     $('#'+this.container_id).show();
@@ -268,6 +268,17 @@ BoardView.prototype.request_board = function() {
     var req = {'event':'request_board'}
     this.websocket.send(JSON.stringify(req));
 }
+
+BoardView.prototype.submit_fen = function() {
+    var str = $('#'+this.container_id + ' .fen_input')[0].value;
+    if(!this.validate_fen(str)) {
+        window.alert('Fen string is not in correct form');
+        return;
+    }
+    var req = JSON.stringify({'event': 'build_from_fen', 'fen_string':str});
+    this.websocket.send(req)
+}
+
 
 
 BoardView.prototype.make_move_result = function(resp) {
@@ -424,6 +435,17 @@ BoardView.prototype.promote_pawn_result = function(resp) {
     }
 }
 
+BoardView.prototype.build_from_fen_result = function(resp) {
+    if(resp.current_turn == -1) {
+        this.current_turn = 'black';
+    } else {
+        this.current_turn = 'white';
+    }
+    this.request_board();
+    if(this.game_type == 1 && this.current_turn == 'black') {
+        this.request_move();
+    }
+}
 
 /*
     Draw board from server response

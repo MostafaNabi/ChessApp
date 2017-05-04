@@ -29,6 +29,7 @@ public:
         Reset the board using the FEN string;
     */
     void build_from_fen(std::string fen);
+    Colour get_current_turn();
 
     // Set AI difficulty between 1 - 10, can only be done on singleplayer games
     void set_ai_difficulty(int ai);

@@ -78,6 +78,16 @@ wss.on('connection', function connection(ws) {
                 ws.send(JSON.stringify(resp));
                 break;
             }
+
+            case 'build_from_fen': {
+                console.log(req.fen_string);
+                wi.build_from_fen(req.fen_string);
+                console.log('built fen')
+                var turn = wi.get_current_turn();
+                var resp = {'event':'build_from_fen_result', 'current_turn': turn};
+                ws.send(JSON.stringify(resp));
+                break;
+            }
         }
     });
 

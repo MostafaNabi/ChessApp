@@ -32,9 +32,6 @@
         <div id='homepage_container' class='container navigation_display_container'>
             <div class='row'>
 		        <div id='homepage_main_col' class='col-md-10'>
-                    <input id='enter_game_password' type='password'/>
-			        <input id='enter_game_button' type='button' value='Enter' onclick='show_game()'/>
-			        </p>
 		        </div>
                 <div id='homepage_side_col' class='col-md-2'>
                 </div>
@@ -47,7 +44,11 @@
                     <div id='singleplayer_board_container' class='board_container'></div>
                 </div> <!-- close singleplayer main column -->
 		        <div id='singleplayer_mid_col' class='col-md-2'> <!-- game options -->
-                    <div id='singleplayer_mid_col_message' class='message'> </div>
+                    <div id='singleplayer_message' class='message'> </div>
+                    <div id='singleplayer_fen' class='fen_container'>
+                        <input id='singleplayer_fen_input' class='fen_input' type='text' placeholder='fen string'/>
+                        <input id='singleplayer_fen_submit' type='button' onclick='SinglePlayerBoardView.submit_fen()' value='submit'/>
+                    </div>
                 </div>
                 
                 <div id='singleplayer_side-col' class='col-md-4'> <!-- game logs -->
@@ -66,9 +67,15 @@
 
 		        <div id='twoplayer_mid_col' class='col-md-2'> <!-- game options -->
                     <div id='twoplayer_mid_col_message' class='message'> </div>
+                    <div id='twoplayer_fen' class='fen_container'>
+                        <input id='twoplayer_fen_input' class='fen_input' type='text' placeholder='fen string'/>
+                        <input id='twoplayer_fen_submit' type='button' onclick='TwoPlayerBoardView.submit_fen()' value='submit'/>
+                    </div>
                 </div>
-
-                <div id='twoplayer_side-col' class='col-md-4'></div> <!-- game logs -->
+                
+                <div id='twoplayer_side-col' class='col-md-4'> <!-- game logs -->
+                    <div id='twoplayer_move_log' class='move_logs'> </div>
+                </div>
 
             </div> <!-- close twoplayer row -->
         </div> <!-- close two player container -->
@@ -82,17 +89,9 @@
     <script type='text/javascript'>
             SinglePlayerBoardView = new BoardView(1, 'singleplayer_container');
             TwoPlayerBoardView = new BoardView(2, 'twoplayer_container')
-            function show_game() {
-                var pw = document.getElementById('enter_game_password').value;
-                if (pw == 'PLAYCHESS') {
-                    SinglePlayerBoardView.show_game = true;
-                    SinglePlayerBoardView.init();
-                    SinglePlayerBoardView.display();
-
-                    TwoPlayerBoardView.show_game = true;
-                    TwoPlayerBoardView.init();
-                }
-            }
+            SinglePlayerBoardView.init();
+            SinglePlayerBoardView.display();
+            TwoPlayerBoardView.init();
     </script>
 
 </body>

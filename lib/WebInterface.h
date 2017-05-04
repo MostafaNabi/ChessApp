@@ -20,6 +20,7 @@ class WebInterface : public node::ObjectWrap {
         static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
 
         static void build_from_fen(const v8::FunctionCallbackInfo<v8::Value>& args);
+        static void get_current_turn(const v8::FunctionCallbackInfo<v8::Value>& args);
         static void set_ai_difficulty(const v8::FunctionCallbackInfo<v8::Value>& args);
         static void request_move(const v8::FunctionCallbackInfo<v8::Value>& args);
         static void make_move(const v8::FunctionCallbackInfo<v8::Value>& args);
