@@ -47,7 +47,6 @@ BoardView.prototype.init = function() {
     }
 }
 
-
 BoardView.prototype.setupWebsocket = function() {
     var self = this;
     self.websocket.addEventListener('message', function(event) {
@@ -272,7 +271,7 @@ BoardView.prototype.request_board = function() {
 BoardView.prototype.submit_fen = function() {
     var str = $('#'+this.container_id + ' .fen_input')[0].value;
     if(!this.validate_fen(str)) {
-        window.alert('Fen string is not in correct form');
+        window.alert('Fen string is not in correct form, example: 1r5k/2p3p1/6p1/1q6/4p3/8/r7/4R2K b -- 69 35');
         return;
     }
     var req = JSON.stringify({'event': 'build_from_fen', 'fen_string':str});
