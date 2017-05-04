@@ -1,11 +1,16 @@
 Chess mages taken from: https://commons.wikimedia.org/wiki/Category:PNG_chess_pieces/Standard_transparent
 
+Since I used Github for my version control and checked that out using the file it is all contained in a .git folder.
+I cannot test setting up the server correctly, since the labs do not have node.js and in order to truly test it I would need to reset my entire work environment.
+
+
 First to setup the chess app stand-alone
 
 1. The makefile uses the g++ compiler and c++11 library
-2. Simply type make and that should do it :)
-3. If you want to change the compiler simply modify the makefile
-4. The main file runs a singleplayer command line game as well as perft tests.
+2. Enter make clean to clean any existing files.
+3. Simply type make and ./Chess and that should do it :)
+4. If you want to change the compiler simply modify the makefile
+5. The main file runs a singleplayer command line game as well as perft tests.
     It is simple enough to change if you wish.
 
 
